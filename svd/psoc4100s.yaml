@@ -1,0 +1,7 @@
+transforms:
+  - DeleteFieldsets:
+      from: .*
+      useless: true
+
+  # Cleanup
+  - Sanitize: {}

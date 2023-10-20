@@ -38,6 +38,217 @@
   <resetMask>0xFFFFFFFF</resetMask>
   <peripherals>
     <peripheral>
+      <name>SFLASH</name>
+      <description>Supervisory Flash</description>
+      <baseAddress>0x0FFFF000</baseAddress>
+      <addressBlock>
+        <offset>0</offset>
+        <size>512</size>
+        <usage>registers</usage>
+      </addressBlock>
+      <registers>
+        <register>
+          <name>SILICON_ID</name>
+          <description>Silicon ID</description>
+          <addressOffset>0x144</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <fields>
+            <field>
+              <name>ID</name>
+              <description>Silicon ID</description>
+              <bitRange>[16:0]</bitRange>
+              <access>read-only</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>HIB_KEY_DELAY</name>
+          <description>Hibernate wakeup value for PWR_KEY_DELAY</description>
+          <addressOffset>0x150</addressOffset>
+          <size>16</size>
+          <access>read-only</access>
+          <fields>
+            <field>
+              <name>WAKEUP_HOLDOFF</name>
+              <description>Delay (in 12MHz IMO clock cycles) to wait for references to settle on wakeup from hibernate/
+              deepsleep. PBOD is ignored and system does not resume until this delay expires. Note that the
+              same delay on POR is hard-coded.</description>
+              <bitRange>[9:0]</bitRange>
+              <access>read-only</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>DPSLP_KEY_DELAY</name>
+          <description>DeepSleep wakeup value for PWR_KEY_DELAY</description>
+          <addressOffset>0x152</addressOffset>
+          <size>16</size>
+          <access>read-only</access>
+          <fields>
+            <field>
+              <name>WAKEUP_HOLDOFF</name>
+              <description>Delay (in 12MHz IMO clock cycles) to wait for references to settle on wakeup from hibernate/
+              deepsleep. PBOD is ignored and system does not resume until this delay expires. Note that the
+              same delay on POR is hard-coded.</description>
+              <bitRange>[9:0]</bitRange>
+              <access>read-only</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>SWD_CONFIG</name>
+          <description>SWD pinout selector (not present in TSG4/TSG5-M)</description>
+          <addressOffset>0x154</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <fields>
+            <field>
+              <name>SWD_SELECT</name>
+              <description>0: Use Primary SWD location
+              1: Use Alternate SWD location</description>
+              <bitRange>[0:0]</bitRange>
+              <access>read-only</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>SWD_LISTEN</name>
+          <description>Listen Window Length</description>
+          <addressOffset>0x158</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <fields>
+            <field>
+              <name>CYCLES</name>
+              <description>Number of clock cycles</description>
+              <bitRange>[31:0]</bitRange>
+              <access>read-only</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>FLASH_START</name>
+          <description>Flash Image Start Address</description>
+          <addressOffset>0x15C</addressOffset>
+          <size>32</size>
+          <access>read-only</access>
+          <fields>
+            <field>
+              <name>ADDRESS</name>
+              <description>Start Address</description>
+              <bitRange>[31:0]</bitRange>
+              <access>read-only</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>CSDV2_CSD0_ADC_TRIM1</name>
+          <description>CSDV2 CSD0 ADC TRIM 1</description>
+          <addressOffset>0x160</addressOffset>
+          <size>8</size>
+          <access>read-only</access>
+          <fields>
+            <field>
+              <name>CSD_ADC_CAL_LSB</name>
+              <description>Low byte of CSDv2 Calibration</description>
+              <bitRange>[7:0]</bitRange>
+              <access>read-only</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>CSDV2_CSD0_ADC_TRIM2</name>
+          <description>CSDV2 CSD0 ADC TRIM2</description>
+          <addressOffset>0x160</addressOffset>
+          <size>8</size>
+          <access>read-only</access>
+          <fields>
+            <field>
+              <name>CSD_ADC_CAL_MSB</name>
+              <description>High byte of CSDv2 Calibration</description>
+              <bitRange>[7:0]</bitRange>
+              <access>read-only</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>SAR_TEMP_MULTIPLIER</name>
+          <description>SAR Temperature Sensor Multiplication Factor</description>
+          <addressOffset>0x164</addressOffset>
+          <size>16</size>
+          <access>read-only</access>
+          <fields>
+            <field>
+              <name>TEMP_MULTIPLIER</name>
+              <description>Multiplier value for SAR temperature sensor in fixed point 0.16 format. Note: this field exists in
+              products that contain SAR (m0s8sar) only.</description>
+              <bitRange>[15:0]</bitRange>
+              <access>read-only</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>SAR_TEMP_OFFSET</name>
+          <description>SAR Temperature Sensor Offset</description>
+          <addressOffset>0x166</addressOffset>
+          <size>16</size>
+          <access>read-only</access>
+          <fields>
+            <field>
+              <name>TEMP_OFFSET</name>
+              <description>Offset value for SAR temperature sensor in fixed point 10.6 format. Note: this field exists in products that contain SAR (m0s8sar) only.</description>
+              <bitRange>[15:0]</bitRange>
+              <access>read-only</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <dim>25</dim>
+          <dimIncrement>1</dimIncrement>
+          <name>IMO_TCTRIM_LT[%s]</name>
+          <description>IMO TempCo Trim Register (SRSS-Lite)</description>
+          <addressOffset>0x1CC</addressOffset>
+          <size>8</size>
+          <access>read-only</access>
+          <fields>
+            <field>
+              <name>STEPSIZE</name>
+              <description>IMO trim stepsize bits. These bits are determined at manufacturing time to adjust for process
+              variation. They are used to tune the stepsize of the FSOFFSET and OFFSET trims.</description>
+              <bitRange>[4:0]</bitRange>
+              <access>read-only</access>
+            </field>
+            <field>
+              <name>TCTRIM</name>
+              <description>IMO temperature compesation trim. These bits are determined at manufacturing time to adjust
+              for temperature dependence. This bits are dependent on frequency and need to be changed using the Cypress provided frequency change algorithm.</description>
+              <bitRange>[6:5]</bitRange>
+              <access>read-only</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <dim>25</dim>
+          <dimIncrement>1</dimIncrement>
+          <name>IMO_TRIM_LT[%s]</name>
+          <description>IMO Frequency Trim Register (SRSS-Lite)</description>
+          <addressOffset>0x1E5</addressOffset>
+          <size>8</size>
+          <access>read-only</access>
+          <fields>
+            <field>
+              <name>OFFSET</name>
+              <description>Frequency trim bits. These bits are determined at manufacturing time for each FREQ setting
+              (IMO_TRIM2) and stored in SFLASH.</description>
+              <bitRange>[7:0]</bitRange>
+              <access>read-only</access>
+            </field>
+          </fields>
+        </register>
+      </registers>
+    </peripheral>
+    <peripheral>
       <name>PERI</name>
       <description>Peripheral Interconnect</description>
       <baseAddress>0x40010000</baseAddress>

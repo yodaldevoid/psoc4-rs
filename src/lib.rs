@@ -52,6 +52,8 @@ unsafe impl cortex_m::interrupt::InterruptNumber for Interrupt {
 }
 #[cfg(feature = "rt")]
 mod _vectors;
+#[doc = "Supervisory Flash"]
+pub const SFLASH: sflash::Sflash = unsafe { sflash::Sflash::from_ptr(0x0fff_f000 as usize as _) };
 #[doc = "Peripheral Interconnect"]
 pub const PERI: peri::Peri = unsafe { peri::Peri::from_ptr(0x4001_0000 as usize as _) };
 #[doc = "High Speed IO Matrix (HSIOM)"]
@@ -106,6 +108,7 @@ pub mod peri;
 pub mod prgio;
 pub mod sar0;
 pub mod scb0;
+pub mod sflash;
 pub mod spcif;
 pub mod srsslt;
 pub mod tcpwm;

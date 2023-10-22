@@ -2610,11 +2610,67 @@ Note: The upper value on VOH is limited to Vddio - 400mV</description>
             <resetMask>0xFF</resetMask>
             <fields>
               <field>
-                <name>DATA</name>
+                <name>DATA0</name>
                 <description>IO pad i:
 '0': Output state DR.DATA[i] not affected.
 '1': Output state DR.DATA[i] set to '1'.</description>
-                <bitRange>[7:0]</bitRange>
+                <bitRange>[0:0]</bitRange>
+                <access>read-write</access>
+              </field>
+              <field>
+                <name>DATA1</name>
+                <description>IO pad i:
+'0': Output state DR.DATA[i] not affected.
+'1': Output state DR.DATA[i] set to '1'.</description>
+                <bitRange>[1:1]</bitRange>
+                <access>read-write</access>
+              </field>
+              <field>
+                <name>DATA2</name>
+                <description>IO pad i:
+'0': Output state DR.DATA[i] not affected.
+'1': Output state DR.DATA[i] set to '1'.</description>
+                <bitRange>[2:2]</bitRange>
+                <access>read-write</access>
+              </field>
+              <field>
+                <name>DATA3</name>
+                <description>IO pad i:
+'0': Output state DR.DATA[i] not affected.
+'1': Output state DR.DATA[i] set to '1'.</description>
+                <bitRange>[3:3]</bitRange>
+                <access>read-write</access>
+              </field>
+              <field>
+                <name>DATA4</name>
+                <description>IO pad i:
+'0': Output state DR.DATA[i] not affected.
+'1': Output state DR.DATA[i] set to '1'.</description>
+                <bitRange>[4:4]</bitRange>
+                <access>read-write</access>
+              </field>
+              <field>
+                <name>DATA5</name>
+                <description>IO pad i:
+'0': Output state DR.DATA[i] not affected.
+'1': Output state DR.DATA[i] set to '1'.</description>
+                <bitRange>[5:5]</bitRange>
+                <access>read-write</access>
+              </field>
+              <field>
+                <name>DATA6</name>
+                <description>IO pad i:
+'0': Output state DR.DATA[i] not affected.
+'1': Output state DR.DATA[i] set to '1'.</description>
+                <bitRange>[6:6]</bitRange>
+                <access>read-write</access>
+              </field>
+              <field>
+                <name>DATA7</name>
+                <description>IO pad i:
+'0': Output state DR.DATA[i] not affected.
+'1': Output state DR.DATA[i] set to '1'.</description>
+                <bitRange>[7:7]</bitRange>
                 <access>read-write</access>
               </field>
             </fields>
@@ -2629,11 +2685,67 @@ Note: The upper value on VOH is limited to Vddio - 400mV</description>
             <resetMask>0xFF</resetMask>
             <fields>
               <field>
-                <name>DATA</name>
+                <name>DATA0</name>
                 <description>IO pad i:
 '0': Output state DR.DATA[i] not affected.
 '1': Output state DR.DATA[i] set to '0'.</description>
-                <bitRange>[7:0]</bitRange>
+                <bitRange>[0:0]</bitRange>
+                <access>read-write</access>
+              </field>
+              <field>
+                <name>DATA1</name>
+                <description>IO pad i:
+'0': Output state DR.DATA[i] not affected.
+'1': Output state DR.DATA[i] set to '0'.</description>
+                <bitRange>[1:1]</bitRange>
+                <access>read-write</access>
+              </field>
+              <field>
+                <name>DATA2</name>
+                <description>IO pad i:
+'0': Output state DR.DATA[i] not affected.
+'1': Output state DR.DATA[i] set to '0'.</description>
+                <bitRange>[2:2]</bitRange>
+                <access>read-write</access>
+              </field>
+              <field>
+                <name>DATA3</name>
+                <description>IO pad i:
+'0': Output state DR.DATA[i] not affected.
+'1': Output state DR.DATA[i] set to '0'.</description>
+                <bitRange>[3:3]</bitRange>
+                <access>read-write</access>
+              </field>
+              <field>
+                <name>DATA4</name>
+                <description>IO pad i:
+'0': Output state DR.DATA[i] not affected.
+'1': Output state DR.DATA[i] set to '0'.</description>
+                <bitRange>[4:4]</bitRange>
+                <access>read-write</access>
+              </field>
+              <field>
+                <name>DATA5</name>
+                <description>IO pad i:
+'0': Output state DR.DATA[i] not affected.
+'1': Output state DR.DATA[i] set to '0'.</description>
+                <bitRange>[5:5]</bitRange>
+                <access>read-write</access>
+              </field>
+              <field>
+                <name>DATA6</name>
+                <description>IO pad i:
+'0': Output state DR.DATA[i] not affected.
+'1': Output state DR.DATA[i] set to '0'.</description>
+                <bitRange>[6:6]</bitRange>
+                <access>read-write</access>
+              </field>
+              <field>
+                <name>DATA7</name>
+                <description>IO pad i:
+'0': Output state DR.DATA[i] not affected.
+'1': Output state DR.DATA[i] set to '0'.</description>
+                <bitRange>[7:7]</bitRange>
                 <access>read-write</access>
               </field>
             </fields>
@@ -2648,11 +2760,67 @@ Note: The upper value on VOH is limited to Vddio - 400mV</description>
             <resetMask>0xFF</resetMask>
             <fields>
               <field>
-                <name>DATA</name>
+                <name>DATA0</name>
                 <description>IO pad i:
 '0': Output state DR.DATA[i] not affected.
 '1': Output state DR.DATA[i] inverted ('0' =&gt; '1', '1' =&gt; '0').</description>
-                <bitRange>[7:0]</bitRange>
+                <bitRange>[0:0]</bitRange>
+                <access>read-write</access>
+              </field>
+              <field>
+                <name>DATA1</name>
+                <description>IO pad i:
+'0': Output state DR.DATA[i] not affected.
+'1': Output state DR.DATA[i] inverted ('0' =&gt; '1', '1' =&gt; '0').</description>
+                <bitRange>[1:1]</bitRange>
+                <access>read-write</access>
+              </field>
+              <field>
+                <name>DATA2</name>
+                <description>IO pad i:
+'0': Output state DR.DATA[i] not affected.
+'1': Output state DR.DATA[i] inverted ('0' =&gt; '1', '1' =&gt; '0').</description>
+                <bitRange>[2:2]</bitRange>
+                <access>read-write</access>
+              </field>
+              <field>
+                <name>DATA3</name>
+                <description>IO pad i:
+'0': Output state DR.DATA[i] not affected.
+'1': Output state DR.DATA[i] inverted ('0' =&gt; '1', '1' =&gt; '0').</description>
+                <bitRange>[3:3]</bitRange>
+                <access>read-write</access>
+              </field>
+              <field>
+                <name>DATA4</name>
+                <description>IO pad i:
+'0': Output state DR.DATA[i] not affected.
+'1': Output state DR.DATA[i] inverted ('0' =&gt; '1', '1' =&gt; '0').</description>
+                <bitRange>[4:4]</bitRange>
+                <access>read-write</access>
+              </field>
+              <field>
+                <name>DATA5</name>
+                <description>IO pad i:
+'0': Output state DR.DATA[i] not affected.
+'1': Output state DR.DATA[i] inverted ('0' =&gt; '1', '1' =&gt; '0').</description>
+                <bitRange>[5:5]</bitRange>
+                <access>read-write</access>
+              </field>
+              <field>
+                <name>DATA6</name>
+                <description>IO pad i:
+'0': Output state DR.DATA[i] not affected.
+'1': Output state DR.DATA[i] inverted ('0' =&gt; '1', '1' =&gt; '0').</description>
+                <bitRange>[6:6]</bitRange>
+                <access>read-write</access>
+              </field>
+              <field>
+                <name>DATA7</name>
+                <description>IO pad i:
+'0': Output state DR.DATA[i] not affected.
+'1': Output state DR.DATA[i] inverted ('0' =&gt; '1', '1' =&gt; '0').</description>
+                <bitRange>[7:7]</bitRange>
                 <access>read-write</access>
               </field>
             </fields>

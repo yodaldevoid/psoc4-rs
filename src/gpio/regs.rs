@@ -105,14 +105,91 @@ pub struct DrClr(pub u32);
 impl DrClr {
     #[doc = "IO pad i: '0': Output state DR.DATA\\[i\\] not affected. '1': Output state DR.DATA\\[i\\] set to '0'."]
     #[inline(always)]
-    pub const fn data(&self) -> u8 {
-        let val = (self.0 >> 0usize) & 0xff;
-        val as u8
+    pub const fn data0(&self) -> bool {
+        let val = (self.0 >> 0usize) & 0x01;
+        val != 0
     }
     #[doc = "IO pad i: '0': Output state DR.DATA\\[i\\] not affected. '1': Output state DR.DATA\\[i\\] set to '0'."]
     #[inline(always)]
-    pub fn set_data(&mut self, val: u8) {
-        self.0 = (self.0 & !(0xff << 0usize)) | (((val as u32) & 0xff) << 0usize);
+    pub fn set_data0(&mut self, val: bool) {
+        self.0 = (self.0 & !(0x01 << 0usize)) | (((val as u32) & 0x01) << 0usize);
+    }
+    #[doc = "IO pad i: '0': Output state DR.DATA\\[i\\] not affected. '1': Output state DR.DATA\\[i\\] set to '0'."]
+    #[inline(always)]
+    pub const fn data1(&self) -> bool {
+        let val = (self.0 >> 1usize) & 0x01;
+        val != 0
+    }
+    #[doc = "IO pad i: '0': Output state DR.DATA\\[i\\] not affected. '1': Output state DR.DATA\\[i\\] set to '0'."]
+    #[inline(always)]
+    pub fn set_data1(&mut self, val: bool) {
+        self.0 = (self.0 & !(0x01 << 1usize)) | (((val as u32) & 0x01) << 1usize);
+    }
+    #[doc = "IO pad i: '0': Output state DR.DATA\\[i\\] not affected. '1': Output state DR.DATA\\[i\\] set to '0'."]
+    #[inline(always)]
+    pub const fn data2(&self) -> bool {
+        let val = (self.0 >> 2usize) & 0x01;
+        val != 0
+    }
+    #[doc = "IO pad i: '0': Output state DR.DATA\\[i\\] not affected. '1': Output state DR.DATA\\[i\\] set to '0'."]
+    #[inline(always)]
+    pub fn set_data2(&mut self, val: bool) {
+        self.0 = (self.0 & !(0x01 << 2usize)) | (((val as u32) & 0x01) << 2usize);
+    }
+    #[doc = "IO pad i: '0': Output state DR.DATA\\[i\\] not affected. '1': Output state DR.DATA\\[i\\] set to '0'."]
+    #[inline(always)]
+    pub const fn data3(&self) -> bool {
+        let val = (self.0 >> 3usize) & 0x01;
+        val != 0
+    }
+    #[doc = "IO pad i: '0': Output state DR.DATA\\[i\\] not affected. '1': Output state DR.DATA\\[i\\] set to '0'."]
+    #[inline(always)]
+    pub fn set_data3(&mut self, val: bool) {
+        self.0 = (self.0 & !(0x01 << 3usize)) | (((val as u32) & 0x01) << 3usize);
+    }
+    #[doc = "IO pad i: '0': Output state DR.DATA\\[i\\] not affected. '1': Output state DR.DATA\\[i\\] set to '0'."]
+    #[inline(always)]
+    pub const fn data4(&self) -> bool {
+        let val = (self.0 >> 4usize) & 0x01;
+        val != 0
+    }
+    #[doc = "IO pad i: '0': Output state DR.DATA\\[i\\] not affected. '1': Output state DR.DATA\\[i\\] set to '0'."]
+    #[inline(always)]
+    pub fn set_data4(&mut self, val: bool) {
+        self.0 = (self.0 & !(0x01 << 4usize)) | (((val as u32) & 0x01) << 4usize);
+    }
+    #[doc = "IO pad i: '0': Output state DR.DATA\\[i\\] not affected. '1': Output state DR.DATA\\[i\\] set to '0'."]
+    #[inline(always)]
+    pub const fn data5(&self) -> bool {
+        let val = (self.0 >> 5usize) & 0x01;
+        val != 0
+    }
+    #[doc = "IO pad i: '0': Output state DR.DATA\\[i\\] not affected. '1': Output state DR.DATA\\[i\\] set to '0'."]
+    #[inline(always)]
+    pub fn set_data5(&mut self, val: bool) {
+        self.0 = (self.0 & !(0x01 << 5usize)) | (((val as u32) & 0x01) << 5usize);
+    }
+    #[doc = "IO pad i: '0': Output state DR.DATA\\[i\\] not affected. '1': Output state DR.DATA\\[i\\] set to '0'."]
+    #[inline(always)]
+    pub const fn data6(&self) -> bool {
+        let val = (self.0 >> 6usize) & 0x01;
+        val != 0
+    }
+    #[doc = "IO pad i: '0': Output state DR.DATA\\[i\\] not affected. '1': Output state DR.DATA\\[i\\] set to '0'."]
+    #[inline(always)]
+    pub fn set_data6(&mut self, val: bool) {
+        self.0 = (self.0 & !(0x01 << 6usize)) | (((val as u32) & 0x01) << 6usize);
+    }
+    #[doc = "IO pad i: '0': Output state DR.DATA\\[i\\] not affected. '1': Output state DR.DATA\\[i\\] set to '0'."]
+    #[inline(always)]
+    pub const fn data7(&self) -> bool {
+        let val = (self.0 >> 7usize) & 0x01;
+        val != 0
+    }
+    #[doc = "IO pad i: '0': Output state DR.DATA\\[i\\] not affected. '1': Output state DR.DATA\\[i\\] set to '0'."]
+    #[inline(always)]
+    pub fn set_data7(&mut self, val: bool) {
+        self.0 = (self.0 & !(0x01 << 7usize)) | (((val as u32) & 0x01) << 7usize);
     }
 }
 impl Default for DrClr {
@@ -128,14 +205,91 @@ pub struct DrInv(pub u32);
 impl DrInv {
     #[doc = "IO pad i: '0': Output state DR.DATA\\[i\\] not affected. '1': Output state DR.DATA\\[i\\] inverted ('0' => '1', '1' => '0')."]
     #[inline(always)]
-    pub const fn data(&self) -> u8 {
-        let val = (self.0 >> 0usize) & 0xff;
-        val as u8
+    pub const fn data0(&self) -> bool {
+        let val = (self.0 >> 0usize) & 0x01;
+        val != 0
     }
     #[doc = "IO pad i: '0': Output state DR.DATA\\[i\\] not affected. '1': Output state DR.DATA\\[i\\] inverted ('0' => '1', '1' => '0')."]
     #[inline(always)]
-    pub fn set_data(&mut self, val: u8) {
-        self.0 = (self.0 & !(0xff << 0usize)) | (((val as u32) & 0xff) << 0usize);
+    pub fn set_data0(&mut self, val: bool) {
+        self.0 = (self.0 & !(0x01 << 0usize)) | (((val as u32) & 0x01) << 0usize);
+    }
+    #[doc = "IO pad i: '0': Output state DR.DATA\\[i\\] not affected. '1': Output state DR.DATA\\[i\\] inverted ('0' => '1', '1' => '0')."]
+    #[inline(always)]
+    pub const fn data1(&self) -> bool {
+        let val = (self.0 >> 1usize) & 0x01;
+        val != 0
+    }
+    #[doc = "IO pad i: '0': Output state DR.DATA\\[i\\] not affected. '1': Output state DR.DATA\\[i\\] inverted ('0' => '1', '1' => '0')."]
+    #[inline(always)]
+    pub fn set_data1(&mut self, val: bool) {
+        self.0 = (self.0 & !(0x01 << 1usize)) | (((val as u32) & 0x01) << 1usize);
+    }
+    #[doc = "IO pad i: '0': Output state DR.DATA\\[i\\] not affected. '1': Output state DR.DATA\\[i\\] inverted ('0' => '1', '1' => '0')."]
+    #[inline(always)]
+    pub const fn data2(&self) -> bool {
+        let val = (self.0 >> 2usize) & 0x01;
+        val != 0
+    }
+    #[doc = "IO pad i: '0': Output state DR.DATA\\[i\\] not affected. '1': Output state DR.DATA\\[i\\] inverted ('0' => '1', '1' => '0')."]
+    #[inline(always)]
+    pub fn set_data2(&mut self, val: bool) {
+        self.0 = (self.0 & !(0x01 << 2usize)) | (((val as u32) & 0x01) << 2usize);
+    }
+    #[doc = "IO pad i: '0': Output state DR.DATA\\[i\\] not affected. '1': Output state DR.DATA\\[i\\] inverted ('0' => '1', '1' => '0')."]
+    #[inline(always)]
+    pub const fn data3(&self) -> bool {
+        let val = (self.0 >> 3usize) & 0x01;
+        val != 0
+    }
+    #[doc = "IO pad i: '0': Output state DR.DATA\\[i\\] not affected. '1': Output state DR.DATA\\[i\\] inverted ('0' => '1', '1' => '0')."]
+    #[inline(always)]
+    pub fn set_data3(&mut self, val: bool) {
+        self.0 = (self.0 & !(0x01 << 3usize)) | (((val as u32) & 0x01) << 3usize);
+    }
+    #[doc = "IO pad i: '0': Output state DR.DATA\\[i\\] not affected. '1': Output state DR.DATA\\[i\\] inverted ('0' => '1', '1' => '0')."]
+    #[inline(always)]
+    pub const fn data4(&self) -> bool {
+        let val = (self.0 >> 4usize) & 0x01;
+        val != 0
+    }
+    #[doc = "IO pad i: '0': Output state DR.DATA\\[i\\] not affected. '1': Output state DR.DATA\\[i\\] inverted ('0' => '1', '1' => '0')."]
+    #[inline(always)]
+    pub fn set_data4(&mut self, val: bool) {
+        self.0 = (self.0 & !(0x01 << 4usize)) | (((val as u32) & 0x01) << 4usize);
+    }
+    #[doc = "IO pad i: '0': Output state DR.DATA\\[i\\] not affected. '1': Output state DR.DATA\\[i\\] inverted ('0' => '1', '1' => '0')."]
+    #[inline(always)]
+    pub const fn data5(&self) -> bool {
+        let val = (self.0 >> 5usize) & 0x01;
+        val != 0
+    }
+    #[doc = "IO pad i: '0': Output state DR.DATA\\[i\\] not affected. '1': Output state DR.DATA\\[i\\] inverted ('0' => '1', '1' => '0')."]
+    #[inline(always)]
+    pub fn set_data5(&mut self, val: bool) {
+        self.0 = (self.0 & !(0x01 << 5usize)) | (((val as u32) & 0x01) << 5usize);
+    }
+    #[doc = "IO pad i: '0': Output state DR.DATA\\[i\\] not affected. '1': Output state DR.DATA\\[i\\] inverted ('0' => '1', '1' => '0')."]
+    #[inline(always)]
+    pub const fn data6(&self) -> bool {
+        let val = (self.0 >> 6usize) & 0x01;
+        val != 0
+    }
+    #[doc = "IO pad i: '0': Output state DR.DATA\\[i\\] not affected. '1': Output state DR.DATA\\[i\\] inverted ('0' => '1', '1' => '0')."]
+    #[inline(always)]
+    pub fn set_data6(&mut self, val: bool) {
+        self.0 = (self.0 & !(0x01 << 6usize)) | (((val as u32) & 0x01) << 6usize);
+    }
+    #[doc = "IO pad i: '0': Output state DR.DATA\\[i\\] not affected. '1': Output state DR.DATA\\[i\\] inverted ('0' => '1', '1' => '0')."]
+    #[inline(always)]
+    pub const fn data7(&self) -> bool {
+        let val = (self.0 >> 7usize) & 0x01;
+        val != 0
+    }
+    #[doc = "IO pad i: '0': Output state DR.DATA\\[i\\] not affected. '1': Output state DR.DATA\\[i\\] inverted ('0' => '1', '1' => '0')."]
+    #[inline(always)]
+    pub fn set_data7(&mut self, val: bool) {
+        self.0 = (self.0 & !(0x01 << 7usize)) | (((val as u32) & 0x01) << 7usize);
     }
 }
 impl Default for DrInv {
@@ -151,14 +305,91 @@ pub struct DrSet(pub u32);
 impl DrSet {
     #[doc = "IO pad i: '0': Output state DR.DATA\\[i\\] not affected. '1': Output state DR.DATA\\[i\\] set to '1'."]
     #[inline(always)]
-    pub const fn data(&self) -> u8 {
-        let val = (self.0 >> 0usize) & 0xff;
-        val as u8
+    pub const fn data0(&self) -> bool {
+        let val = (self.0 >> 0usize) & 0x01;
+        val != 0
     }
     #[doc = "IO pad i: '0': Output state DR.DATA\\[i\\] not affected. '1': Output state DR.DATA\\[i\\] set to '1'."]
     #[inline(always)]
-    pub fn set_data(&mut self, val: u8) {
-        self.0 = (self.0 & !(0xff << 0usize)) | (((val as u32) & 0xff) << 0usize);
+    pub fn set_data0(&mut self, val: bool) {
+        self.0 = (self.0 & !(0x01 << 0usize)) | (((val as u32) & 0x01) << 0usize);
+    }
+    #[doc = "IO pad i: '0': Output state DR.DATA\\[i\\] not affected. '1': Output state DR.DATA\\[i\\] set to '1'."]
+    #[inline(always)]
+    pub const fn data1(&self) -> bool {
+        let val = (self.0 >> 1usize) & 0x01;
+        val != 0
+    }
+    #[doc = "IO pad i: '0': Output state DR.DATA\\[i\\] not affected. '1': Output state DR.DATA\\[i\\] set to '1'."]
+    #[inline(always)]
+    pub fn set_data1(&mut self, val: bool) {
+        self.0 = (self.0 & !(0x01 << 1usize)) | (((val as u32) & 0x01) << 1usize);
+    }
+    #[doc = "IO pad i: '0': Output state DR.DATA\\[i\\] not affected. '1': Output state DR.DATA\\[i\\] set to '1'."]
+    #[inline(always)]
+    pub const fn data2(&self) -> bool {
+        let val = (self.0 >> 2usize) & 0x01;
+        val != 0
+    }
+    #[doc = "IO pad i: '0': Output state DR.DATA\\[i\\] not affected. '1': Output state DR.DATA\\[i\\] set to '1'."]
+    #[inline(always)]
+    pub fn set_data2(&mut self, val: bool) {
+        self.0 = (self.0 & !(0x01 << 2usize)) | (((val as u32) & 0x01) << 2usize);
+    }
+    #[doc = "IO pad i: '0': Output state DR.DATA\\[i\\] not affected. '1': Output state DR.DATA\\[i\\] set to '1'."]
+    #[inline(always)]
+    pub const fn data3(&self) -> bool {
+        let val = (self.0 >> 3usize) & 0x01;
+        val != 0
+    }
+    #[doc = "IO pad i: '0': Output state DR.DATA\\[i\\] not affected. '1': Output state DR.DATA\\[i\\] set to '1'."]
+    #[inline(always)]
+    pub fn set_data3(&mut self, val: bool) {
+        self.0 = (self.0 & !(0x01 << 3usize)) | (((val as u32) & 0x01) << 3usize);
+    }
+    #[doc = "IO pad i: '0': Output state DR.DATA\\[i\\] not affected. '1': Output state DR.DATA\\[i\\] set to '1'."]
+    #[inline(always)]
+    pub const fn data4(&self) -> bool {
+        let val = (self.0 >> 4usize) & 0x01;
+        val != 0
+    }
+    #[doc = "IO pad i: '0': Output state DR.DATA\\[i\\] not affected. '1': Output state DR.DATA\\[i\\] set to '1'."]
+    #[inline(always)]
+    pub fn set_data4(&mut self, val: bool) {
+        self.0 = (self.0 & !(0x01 << 4usize)) | (((val as u32) & 0x01) << 4usize);
+    }
+    #[doc = "IO pad i: '0': Output state DR.DATA\\[i\\] not affected. '1': Output state DR.DATA\\[i\\] set to '1'."]
+    #[inline(always)]
+    pub const fn data5(&self) -> bool {
+        let val = (self.0 >> 5usize) & 0x01;
+        val != 0
+    }
+    #[doc = "IO pad i: '0': Output state DR.DATA\\[i\\] not affected. '1': Output state DR.DATA\\[i\\] set to '1'."]
+    #[inline(always)]
+    pub fn set_data5(&mut self, val: bool) {
+        self.0 = (self.0 & !(0x01 << 5usize)) | (((val as u32) & 0x01) << 5usize);
+    }
+    #[doc = "IO pad i: '0': Output state DR.DATA\\[i\\] not affected. '1': Output state DR.DATA\\[i\\] set to '1'."]
+    #[inline(always)]
+    pub const fn data6(&self) -> bool {
+        let val = (self.0 >> 6usize) & 0x01;
+        val != 0
+    }
+    #[doc = "IO pad i: '0': Output state DR.DATA\\[i\\] not affected. '1': Output state DR.DATA\\[i\\] set to '1'."]
+    #[inline(always)]
+    pub fn set_data6(&mut self, val: bool) {
+        self.0 = (self.0 & !(0x01 << 6usize)) | (((val as u32) & 0x01) << 6usize);
+    }
+    #[doc = "IO pad i: '0': Output state DR.DATA\\[i\\] not affected. '1': Output state DR.DATA\\[i\\] set to '1'."]
+    #[inline(always)]
+    pub const fn data7(&self) -> bool {
+        let val = (self.0 >> 7usize) & 0x01;
+        val != 0
+    }
+    #[doc = "IO pad i: '0': Output state DR.DATA\\[i\\] not affected. '1': Output state DR.DATA\\[i\\] set to '1'."]
+    #[inline(always)]
+    pub fn set_data7(&mut self, val: bool) {
+        self.0 = (self.0 & !(0x01 << 7usize)) | (((val as u32) & 0x01) << 7usize);
     }
 }
 impl Default for DrSet {

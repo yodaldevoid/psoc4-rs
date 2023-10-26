@@ -364,40 +364,7 @@ When transitioning a clock between two out of phase dividers, spurious clock con
           </fields>
         </register>
         <register>
-          <dim>64</dim>
-          <dimIncrement>4</dimIncrement>
-          <name>DIV_8_CTL[%s]</name>
-          <description>Divider control register (for 8.0 divider)</description>
-          <addressOffset>0x200</addressOffset>
-          <size>32</size>
-          <access>read-write</access>
-          <resetValue>0x0</resetValue>
-          <resetMask>0xFF01</resetMask>
-          <fields>
-            <field>
-              <name>EN</name>
-              <description>Divider enabled. HW sets this field to '1' as a result of an ENABLE command. HW sets this field to '0' as a result on a DISABLE command.
- 
-Note that this field is retained. As a result, the divider does NOT have to be re-enabled after transitioning from DeepSleep to Active power mode.</description>
-              <bitRange>[0:0]</bitRange>
-              <access>read-only</access>
-            </field>
-            <field>
-              <name>INT8_DIV</name>
-              <description>Integer division by (1+INT8_DIV). Allows for integer divisions in the range [1, 256]. Note: this type of divider does NOT allow for a fractional division.
- 
-For the generation of a divided clock, the integer division range is restricted to [2, 256].
- 
-For the generation of a 50/50 percent duty cycle digital divided clock, the integer division range is restricted to even numbers in the range [2, 256]. The generation of a 50/50  percent duty cycle analog divided clock has no restrictions.
- 
-Note that this field is retained. However, the counter that is used to implement the division is not and will be initialized by HW to '0' when transitioning from DeepSleep to Active power mode.</description>
-              <bitRange>[15:8]</bitRange>
-              <access>read-write</access>
-            </field>
-          </fields>
-        </register>
-        <register>
-          <dim>64</dim>
+          <dim>12</dim>
           <dimIncrement>4</dimIncrement>
           <name>DIV_16_CTL[%s]</name>
           <description>Divider control register (for 16.0 divider)</description>
@@ -430,7 +397,7 @@ Note that this field is retained. However, the counter that is used to implement
           </fields>
         </register>
         <register>
-          <dim>64</dim>
+          <dim>5</dim>
           <dimIncrement>4</dimIncrement>
           <name>DIV_16_5_CTL[%s]</name>
           <description>Divider control register (for 16.5 divider)</description>
@@ -466,47 +433,6 @@ For the generation of a 50/50 percent duty cycle divided clock, the  division ra
  
 Note that this field is retained. However, the counter that is used to implement the division is not and will be initialized by HW to '0' when transitioning from DeepSleep to Active power mode.</description>
               <bitRange>[23:8]</bitRange>
-              <access>read-write</access>
-            </field>
-          </fields>
-        </register>
-        <register>
-          <dim>63</dim>
-          <dimIncrement>4</dimIncrement>
-          <name>DIV_24_5_CTL[%s]</name>
-          <description>Divider control register (for 24.5 divider)</description>
-          <addressOffset>0x500</addressOffset>
-          <size>32</size>
-          <access>read-write</access>
-          <resetValue>0x0</resetValue>
-          <resetMask>0xFFFFFFF9</resetMask>
-          <fields>
-            <field>
-              <name>EN</name>
-              <description>Divider enabled. HW sets this field to '1' as a result of an ENABLE command. HW sets this field to '0' as a result on a DISABLE command.
- 
-Note that this field is retained. As a result, the divider does NOT have to be re-enabled after transitioning from DeepSleep to Active power mode.</description>
-              <bitRange>[0:0]</bitRange>
-              <access>read-only</access>
-            </field>
-            <field>
-              <name>FRAC5_DIV</name>
-              <description>Fractional division by (FRAC5_DIV/32). Allows for fractional divisions in the range [0, 31/32]. Note that fractional division results in clock jitter as some clock periods may be 1 'clk_hf' cycle longer than other clock periods.
- 
-Note that this field is retained. However, the counter that is used to implement the division is not and will be initialized by HW to '0' when transitioning from DeepSleep to Active power mode.</description>
-              <bitRange>[7:3]</bitRange>
-              <access>read-write</access>
-            </field>
-            <field>
-              <name>INT24_DIV</name>
-              <description>Integer division by (1+INT24_DIV). Allows for integer divisions in the range [1, 16,777,216]. Note: combined with fractional division, this divider type allows for a division in the range [1, 16,777,216 31/32] in 1/32 increments.
- 
-For the generation of a divided clock, the integer division range is restricted to [2, 16,777,216 31/32].
- 
-For the generation of a 50/50 percent duty cycle divided clock, the  division range is restricted to [2, 16,777,216].
- 
-Note that this field is retained. However, the counter that is used to implement the division is not and will be initialized by HW to '0' when transitioning from DeepSleep to Active power mode.</description>
-              <bitRange>[31:8]</bitRange>
               <access>read-write</access>
             </field>
           </fields>

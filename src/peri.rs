@@ -25,19 +25,13 @@ impl Peri {
         assert!(n < 64usize);
         unsafe { crate::common::Reg::from_ptr(self.ptr.add(256usize + n * 4usize) as _) }
     }
-    #[doc = "Divider control register (for 8.0 divider)"]
-    #[inline(always)]
-    pub const fn div_8_ctl(self, n: usize) -> crate::common::Reg<regs::Div8ctl, crate::common::RW> {
-        assert!(n < 64usize);
-        unsafe { crate::common::Reg::from_ptr(self.ptr.add(512usize + n * 4usize) as _) }
-    }
     #[doc = "Divider control register (for 16.0 divider)"]
     #[inline(always)]
     pub const fn div_16_ctl(
         self,
         n: usize,
     ) -> crate::common::Reg<regs::Div16ctl, crate::common::RW> {
-        assert!(n < 64usize);
+        assert!(n < 12usize);
         unsafe { crate::common::Reg::from_ptr(self.ptr.add(768usize + n * 4usize) as _) }
     }
     #[doc = "Divider control register (for 16.5 divider)"]
@@ -46,17 +40,8 @@ impl Peri {
         self,
         n: usize,
     ) -> crate::common::Reg<regs::Div165ctl, crate::common::RW> {
-        assert!(n < 64usize);
+        assert!(n < 5usize);
         unsafe { crate::common::Reg::from_ptr(self.ptr.add(1024usize + n * 4usize) as _) }
-    }
-    #[doc = "Divider control register (for 24.5 divider)"]
-    #[inline(always)]
-    pub const fn div_24_5_ctl(
-        self,
-        n: usize,
-    ) -> crate::common::Reg<regs::Div245ctl, crate::common::RW> {
-        assert!(n < 63usize);
-        unsafe { crate::common::Reg::from_ptr(self.ptr.add(1280usize + n * 4usize) as _) }
     }
     #[doc = "Trigger control register"]
     #[inline(always)]

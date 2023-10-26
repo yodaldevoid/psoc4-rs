@@ -4,6 +4,10 @@ transforms:
           useless: true
 
       # === Clocks ===
+      # TODO: limit to 13 peripheral clock outputs
+      # TODO: clock divider selection enum
+      # TODO: divider enables are not writable
+      # TODO: peripheral clock index enum
       - !MergeEnums
           from: srsslt::vals::DftDiv\d
           to: srsslt::vals::DftDiv
@@ -14,7 +18,11 @@ transforms:
           from: srsslt::vals::DftSel\d
           to: srsslt::vals::DftSel
 
+      # === SFLASH ===
+      # TODO: merge SFLASH trim values with related registers
+
       # === GPIO ===
+      # TODO: add fields for Gpio.intr_cause
       - !MakeFieldArray
           fieldsets: gpio::regs::(Dr(Clr|Inv|Set)?|Ps|Intr)
           from: data\d+

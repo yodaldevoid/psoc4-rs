@@ -1,0 +1,60 @@
+[package]
+name = "psoc4100s-hal"
+version = "0.1.0"
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "Hardware Abstraction Library (HAL) for PSoC 4100S chips."
+
+[features]
+default = [ "rt" ]
+rt = [ "psoc4100s-pac/rt" ]
+
+defmt = ["dep:defmt", "embassy-hal-internal/defmt"]
+
+# Reexport the PAC for the currently enabled chip at `embassy_rp::pac`.
+# This is unstable because semver-minor (non-breaking) releases of embassy-rp may major-bump (breaking) the PAC version.
+# If this is an issue for you, you're encouraged to directly depend on a fixed version of the PAC.
+# There are no plans to make this stable.
+unstable-pac = []
+
+time-driver-wdc-ilo = ["embassy-time/tick-hz-40_000"]
+#time-driver-wdc-wco = ["embassy-time/tick-hz-32_768"]
+
+# Enable nightly-only features
+nightly = [
+    "embedded-hal-1",
+    "embedded-hal-async",
+    "embedded-storage-async",
+    "embassy-embedded-hal/nightly",
+    "dep:embedded-io-async",
+]
+
+# Implement embedded-hal 1.0 alpha traits.
+# Implement embedded-hal-async traits if `nightly` is set as well.
+unstable-traits = ["embedded-hal-1", "embedded-hal-nb"]
+
+[dependencies]
+defmt = { version = "0.3", optional = true }
+log = { version = "0.4.14", optional = true }
+
+portable-atomic = { version = "1.5", features = ["unsafe-assume-single-core"] }
+critical-section = "1.1"
+cortex-m = "0.7.6"
+cortex-m-rt = ">=0.6.15,<0.8"
+
+psoc4100s-pac = { version = "0.1.0", path = "../psoc4100s-pac" }
+
+embassy-embedded-hal = { version = "0.1.0", git = "https://github.com/embassy-rs/embassy.git", rev = "f956d19" }
+embassy-hal-internal = { version = "0.1.0", git = "https://github.com/embassy-rs/embassy.git", rev = "f956d19", features = ["cortex-m", "prio-bits-2"] }
+embassy-sync = { version = "0.3.0", git = "https://github.com/embassy-rs/embassy.git", rev = "f956d19" }
+embassy-time = { version = "0.1.5", git = "https://github.com/embassy-rs/embassy.git", rev = "f956d19" }
+
+embedded-hal-02 = { package = "embedded-hal", version = "0.2.6", features = ["unproven"] }
+embedded-hal-1 = { package = "embedded-hal", version = "=1.0.0-rc.1", optional = true }
+embedded-hal-async = { version = "=1.0.0-rc.1", optional = true }
+embedded-hal-nb = { version = "=1.0.0-rc.1", optional = true }
+embedded-io = { version = "0.6.0" }
+embedded-io-async = { version = "0.6.0", optional = true }
+embedded-storage = { version = "0.3" }
+embedded-storage-async = { version = "0.4.0", optional = true }

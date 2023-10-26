@@ -1,0 +1,14 @@
+[package]
+name = "psoc4100s-pac"
+version = "0.1.0"
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "Peripheral Access Crate (PAC) for PSoC 4100S chips."
+
+[dependencies]
+cortex-m = "0.7.1"
+cortex-m-rt = { version = ">=0.6.15,<0.8", optional = true }
+
+[features]
+rt = ["cortex-m-rt/device"]

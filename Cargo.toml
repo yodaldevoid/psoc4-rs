@@ -1,14 +1,11 @@
-[package]
-name = "psoc4100s-pac"
-version = "0.1.0"
+[workspace]
+resolver = "2"
+members = [
+    "psoc4100s-pac",
+    "psoc4100s-hal",
+]
+
+[workspace.package]
 edition = "2021"
 license = "Apache-2.0"
-repository = "https://github.com/yodaldevoid/psoc4100s-pac"
-description = "Peripheral Access Crate (PAC) for PSoC 4100S chips."
-
-[dependencies]
-cortex-m = "0.7.1"
-cortex-m-rt = { version = ">=0.6.15,<0.8", optional = true }
-
-[features]
-rt = ["cortex-m-rt/device"]
+repository = "https://github.com/yodaldevoid/psoc4-rs"

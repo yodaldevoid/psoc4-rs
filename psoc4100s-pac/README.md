@@ -1,6 +1,7 @@
 # psoc4100s-pac
 
-This is a [Peripheral Access Crate][1] for Infineon PSoC 4100S microcontrollers.
+This is a [Peripheral Access Crate][1] for Cypress Semiconductor PSoC 4100S
+microcontrollers.
 
 
 This crate has been automatically generated from the SVD file in[mtb-pdl-cat2]
@@ -8,7 +9,7 @@ This crate has been automatically generated from the SVD file in[mtb-pdl-cat2]
 amenable to writing HALs with, such as converting sets of identical
 registers/fields to arrays, merging identical registers and enums, etc.
 
-This crate is used for the [`embassy-rp`][4] Rust Hardware Abstraction Layer
+This crate is used for the [`psoc4100s-hal`][4] Rust Hardware Abstraction Layer
 (HAL) for PSoC 4100S microcontrollers.
 
 ## Supported chips
@@ -25,4 +26,4 @@ Corporation under a Apache License, Version 2.0.
 [1]: https://rust-embedded.github.io/book/start/registers.html
 [2]: https://github.com/Infineon/mtb-pdl-cat2/blob/ea3a37451801145bbce49f7e989c683618a1cebf/devices/svd/psoc4100s.svd
 [3]: https://github.com/embassy-rs/chiptool/
-[4]: github.com/embassy-rs/embassy/
+[4]: https://github.com/yodaldevoid/psoc4-rs

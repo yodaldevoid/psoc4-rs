@@ -5,68 +5,68 @@ pub struct ClkDftSelect(pub u32);
 impl ClkDftSelect {
     #[doc = "Select signal for DFT output #0"]
     #[inline(always)]
-    pub const fn dft_sel0(&self) -> super::vals::DftSel0 {
+    pub const fn dft_sel0(&self) -> super::vals::DftSel {
         let val = (self.0 >> 0usize) & 0x0f;
-        super::vals::DftSel0::from_bits(val as u8)
+        super::vals::DftSel::from_bits(val as u8)
     }
     #[doc = "Select signal for DFT output #0"]
     #[inline(always)]
-    pub fn set_dft_sel0(&mut self, val: super::vals::DftSel0) {
+    pub fn set_dft_sel0(&mut self, val: super::vals::DftSel) {
         self.0 = (self.0 & !(0x0f << 0usize)) | (((val.to_bits() as u32) & 0x0f) << 0usize);
     }
     #[doc = "DFT Output Divide Down."]
     #[inline(always)]
-    pub const fn dft_div0(&self) -> super::vals::DftDiv0 {
+    pub const fn dft_div0(&self) -> super::vals::DftDiv {
         let val = (self.0 >> 4usize) & 0x03;
-        super::vals::DftDiv0::from_bits(val as u8)
+        super::vals::DftDiv::from_bits(val as u8)
     }
     #[doc = "DFT Output Divide Down."]
     #[inline(always)]
-    pub fn set_dft_div0(&mut self, val: super::vals::DftDiv0) {
+    pub fn set_dft_div0(&mut self, val: super::vals::DftDiv) {
         self.0 = (self.0 & !(0x03 << 4usize)) | (((val.to_bits() as u32) & 0x03) << 4usize);
     }
     #[doc = "Edge sensitivity for in-line divider on output #0 (only relevant when DIV0>0)."]
     #[inline(always)]
-    pub const fn dft_edge0(&self) -> super::vals::DftEdge0 {
+    pub const fn dft_edge0(&self) -> super::vals::DftEdge {
         let val = (self.0 >> 6usize) & 0x01;
-        super::vals::DftEdge0::from_bits(val as u8)
+        super::vals::DftEdge::from_bits(val as u8)
     }
     #[doc = "Edge sensitivity for in-line divider on output #0 (only relevant when DIV0>0)."]
     #[inline(always)]
-    pub fn set_dft_edge0(&mut self, val: super::vals::DftEdge0) {
+    pub fn set_dft_edge0(&mut self, val: super::vals::DftEdge) {
         self.0 = (self.0 & !(0x01 << 6usize)) | (((val.to_bits() as u32) & 0x01) << 6usize);
     }
     #[doc = "Select signal for DFT output #1"]
     #[inline(always)]
-    pub const fn dft_sel1(&self) -> super::vals::DftSel1 {
+    pub const fn dft_sel1(&self) -> super::vals::DftSel {
         let val = (self.0 >> 8usize) & 0x0f;
-        super::vals::DftSel1::from_bits(val as u8)
+        super::vals::DftSel::from_bits(val as u8)
     }
     #[doc = "Select signal for DFT output #1"]
     #[inline(always)]
-    pub fn set_dft_sel1(&mut self, val: super::vals::DftSel1) {
+    pub fn set_dft_sel1(&mut self, val: super::vals::DftSel) {
         self.0 = (self.0 & !(0x0f << 8usize)) | (((val.to_bits() as u32) & 0x0f) << 8usize);
     }
     #[doc = "DFT Output Divide Down."]
     #[inline(always)]
-    pub const fn dft_div1(&self) -> super::vals::DftDiv1 {
+    pub const fn dft_div1(&self) -> super::vals::DftDiv {
         let val = (self.0 >> 12usize) & 0x03;
-        super::vals::DftDiv1::from_bits(val as u8)
+        super::vals::DftDiv::from_bits(val as u8)
     }
     #[doc = "DFT Output Divide Down."]
     #[inline(always)]
-    pub fn set_dft_div1(&mut self, val: super::vals::DftDiv1) {
+    pub fn set_dft_div1(&mut self, val: super::vals::DftDiv) {
         self.0 = (self.0 & !(0x03 << 12usize)) | (((val.to_bits() as u32) & 0x03) << 12usize);
     }
     #[doc = "Edge sensitivity for in-line divider on output #1 (only relevant when DIV1>0)."]
     #[inline(always)]
-    pub const fn dft_edge1(&self) -> super::vals::DftEdge1 {
+    pub const fn dft_edge1(&self) -> super::vals::DftEdge {
         let val = (self.0 >> 14usize) & 0x01;
-        super::vals::DftEdge1::from_bits(val as u8)
+        super::vals::DftEdge::from_bits(val as u8)
     }
     #[doc = "Edge sensitivity for in-line divider on output #1 (only relevant when DIV1>0)."]
     #[inline(always)]
-    pub fn set_dft_edge1(&mut self, val: super::vals::DftEdge1) {
+    pub fn set_dft_edge1(&mut self, val: super::vals::DftEdge) {
         self.0 = (self.0 & !(0x01 << 14usize)) | (((val.to_bits() as u32) & 0x01) << 14usize);
     }
 }

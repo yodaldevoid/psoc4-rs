@@ -146,7 +146,7 @@ impl From<DebugSession> for u8 {
 }
 #[repr(u8)]
 #[derive(Copy, Clone, Eq, PartialEq, Ord, PartialOrd)]
-pub enum DftDiv0 {
+pub enum DftDiv {
     #[doc = "Direct Output"]
     NO_DIV = 0,
     #[doc = "Divide by 2"]
@@ -156,9 +156,9 @@ pub enum DftDiv0 {
     #[doc = "Divide by 8"]
     DIV_BY_8 = 0x03,
 }
-impl DftDiv0 {
+impl DftDiv {
     #[inline(always)]
-    pub const fn from_bits(val: u8) -> DftDiv0 {
+    pub const fn from_bits(val: u8) -> DftDiv {
         unsafe { core::mem::transmute(val & 0x03) }
     }
     #[inline(always)]
@@ -166,63 +166,29 @@ impl DftDiv0 {
         unsafe { core::mem::transmute(self) }
     }
 }
-impl From<u8> for DftDiv0 {
+impl From<u8> for DftDiv {
     #[inline(always)]
-    fn from(val: u8) -> DftDiv0 {
-        DftDiv0::from_bits(val)
+    fn from(val: u8) -> DftDiv {
+        DftDiv::from_bits(val)
     }
 }
-impl From<DftDiv0> for u8 {
+impl From<DftDiv> for u8 {
     #[inline(always)]
-    fn from(val: DftDiv0) -> u8 {
-        DftDiv0::to_bits(val)
-    }
-}
-#[repr(u8)]
-#[derive(Copy, Clone, Eq, PartialEq, Ord, PartialOrd)]
-pub enum DftDiv1 {
-    #[doc = "Direct Output"]
-    NO_DIV = 0,
-    #[doc = "Divide by 2"]
-    DIV_BY_2 = 0x01,
-    #[doc = "Divide by 4"]
-    DIV_BY_4 = 0x02,
-    #[doc = "Divide by 8"]
-    DIV_BY_8 = 0x03,
-}
-impl DftDiv1 {
-    #[inline(always)]
-    pub const fn from_bits(val: u8) -> DftDiv1 {
-        unsafe { core::mem::transmute(val & 0x03) }
-    }
-    #[inline(always)]
-    pub const fn to_bits(self) -> u8 {
-        unsafe { core::mem::transmute(self) }
-    }
-}
-impl From<u8> for DftDiv1 {
-    #[inline(always)]
-    fn from(val: u8) -> DftDiv1 {
-        DftDiv1::from_bits(val)
-    }
-}
-impl From<DftDiv1> for u8 {
-    #[inline(always)]
-    fn from(val: DftDiv1) -> u8 {
-        DftDiv1::to_bits(val)
+    fn from(val: DftDiv) -> u8 {
+        DftDiv::to_bits(val)
     }
 }
 #[repr(u8)]
 #[derive(Copy, Clone, Eq, PartialEq, Ord, PartialOrd)]
-pub enum DftEdge0 {
+pub enum DftEdge {
     #[doc = "Use posedge for divider"]
     POSEDGE = 0,
     #[doc = "Use negedge for divider"]
     NEGEDGE = 0x01,
 }
-impl DftEdge0 {
+impl DftEdge {
     #[inline(always)]
-    pub const fn from_bits(val: u8) -> DftEdge0 {
+    pub const fn from_bits(val: u8) -> DftEdge {
         unsafe { core::mem::transmute(val & 0x01) }
     }
     #[inline(always)]
@@ -230,51 +196,21 @@ impl DftEdge0 {
         unsafe { core::mem::transmute(self) }
     }
 }
-impl From<u8> for DftEdge0 {
+impl From<u8> for DftEdge {
     #[inline(always)]
-    fn from(val: u8) -> DftEdge0 {
-        DftEdge0::from_bits(val)
+    fn from(val: u8) -> DftEdge {
+        DftEdge::from_bits(val)
     }
 }
-impl From<DftEdge0> for u8 {
+impl From<DftEdge> for u8 {
     #[inline(always)]
-    fn from(val: DftEdge0) -> u8 {
-        DftEdge0::to_bits(val)
-    }
-}
-#[repr(u8)]
-#[derive(Copy, Clone, Eq, PartialEq, Ord, PartialOrd)]
-pub enum DftEdge1 {
-    #[doc = "Use posedge for divider"]
-    POSEDGE = 0,
-    #[doc = "Use negedge for divider"]
-    NEGEDGE = 0x01,
-}
-impl DftEdge1 {
-    #[inline(always)]
-    pub const fn from_bits(val: u8) -> DftEdge1 {
-        unsafe { core::mem::transmute(val & 0x01) }
-    }
-    #[inline(always)]
-    pub const fn to_bits(self) -> u8 {
-        unsafe { core::mem::transmute(self) }
-    }
-}
-impl From<u8> for DftEdge1 {
-    #[inline(always)]
-    fn from(val: u8) -> DftEdge1 {
-        DftEdge1::from_bits(val)
-    }
-}
-impl From<DftEdge1> for u8 {
-    #[inline(always)]
-    fn from(val: DftEdge1) -> u8 {
-        DftEdge1::to_bits(val)
+    fn from(val: DftEdge) -> u8 {
+        DftEdge::to_bits(val)
     }
 }
 #[repr(u8)]
 #[derive(Copy, Clone, Eq, PartialEq, Ord, PartialOrd)]
-pub enum DftSel0 {
+pub enum DftSel {
     #[doc = "Disabled - output is 0"]
     NC = 0,
     #[doc = "clk_ilo: ILO output"]
@@ -302,9 +238,9 @@ pub enum DftSel0 {
     _RESERVED_e = 0x0e,
     _RESERVED_f = 0x0f,
 }
-impl DftSel0 {
+impl DftSel {
     #[inline(always)]
-    pub const fn from_bits(val: u8) -> DftSel0 {
+    pub const fn from_bits(val: u8) -> DftSel {
         unsafe { core::mem::transmute(val & 0x0f) }
     }
     #[inline(always)]
@@ -312,68 +248,16 @@ impl DftSel0 {
         unsafe { core::mem::transmute(self) }
     }
 }
-impl From<u8> for DftSel0 {
+impl From<u8> for DftSel {
     #[inline(always)]
-    fn from(val: u8) -> DftSel0 {
-        DftSel0::from_bits(val)
+    fn from(val: u8) -> DftSel {
+        DftSel::from_bits(val)
     }
 }
-impl From<DftSel0> for u8 {
+impl From<DftSel> for u8 {
     #[inline(always)]
-    fn from(val: DftSel0) -> u8 {
-        DftSel0::to_bits(val)
-    }
-}
-#[repr(u8)]
-#[derive(Copy, Clone, Eq, PartialEq, Ord, PartialOrd)]
-pub enum DftSel1 {
-    #[doc = "Disabled - output is 0"]
-    NC = 0,
-    #[doc = "clk_ilo: ILO output"]
-    ILO = 0x01,
-    #[doc = "clk_imo: IMO primary output"]
-    IMO = 0x02,
-    #[doc = "clk_eco: ECO output"]
-    ECO = 0x03,
-    #[doc = "clk_ext: external clock input"]
-    EXTCLK = 0x04,
-    #[doc = "clk_hf: root of the high-speed clock tree"]
-    HFCLK = 0x05,
-    #[doc = "clk_lf: root of the low-speed clock tree"]
-    LFCLK = 0x06,
-    #[doc = "clk_sys: root of the CPU/AHB clock tree (gated version of clk_hf)"]
-    SYSCLK = 0x07,
-    #[doc = "clk_pump: clock provided to charge pumps in FLASH and PA"]
-    PUMPCLK = 0x08,
-    #[doc = "clk_slpctrl: clock provided to SleepController"]
-    SLPCTRLCLK = 0x09,
-    _RESERVED_a = 0x0a,
-    _RESERVED_b = 0x0b,
-    _RESERVED_c = 0x0c,
-    _RESERVED_d = 0x0d,
-    _RESERVED_e = 0x0e,
-    _RESERVED_f = 0x0f,
-}
-impl DftSel1 {
-    #[inline(always)]
-    pub const fn from_bits(val: u8) -> DftSel1 {
-        unsafe { core::mem::transmute(val & 0x0f) }
-    }
-    #[inline(always)]
-    pub const fn to_bits(self) -> u8 {
-        unsafe { core::mem::transmute(self) }
-    }
-}
-impl From<u8> for DftSel1 {
-    #[inline(always)]
-    fn from(val: u8) -> DftSel1 {
-        DftSel1::from_bits(val)
-    }
-}
-impl From<DftSel1> for u8 {
-    #[inline(always)]
-    fn from(val: DftSel1) -> u8 {
-        DftSel1::to_bits(val)
+    fn from(val: DftSel) -> u8 {
+        DftSel::to_bits(val)
     }
 }
 #[repr(u8)]

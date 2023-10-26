@@ -3,6 +3,17 @@ transforms:
           from: .*
           useless: true
 
+      # === Clocks ===
+      - !MergeEnums
+          from: srsslt::vals::DftDiv\d
+          to: srsslt::vals::DftDiv
+      - !MergeEnums
+          from: srsslt::vals::DftEdge\d
+          to: srsslt::vals::DftEdge
+      - !MergeEnums
+          from: srsslt::vals::DftSel\d
+          to: srsslt::vals::DftSel
+
       # === GPIO ===
       - !MakeFieldArray
           fieldsets: gpio::regs::(Dr(Clr|Inv|Set)?|Ps|Intr)

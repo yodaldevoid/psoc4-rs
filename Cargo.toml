@@ -3,6 +3,7 @@ name = "psoc4100s-pac"
 version = "0.1.0"
 edition = "2021"
 license = "Apache-2.0"
+repository = "https://github.com/yodaldevoid/psoc4100s-pac"
 description = "Peripheral Access Crate (PAC) for PSoC 4100S chips."
 
 [dependencies]

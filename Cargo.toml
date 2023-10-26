@@ -3,6 +3,7 @@ resolver = "2"
 members = [
     "psoc4100s-pac",
     "psoc4100s-hal",
+    "psoc4100s-examples",
 ]
 
 [workspace.package]

@@ -1,6 +1,6 @@
 #[repr(u8)]
 #[derive(Copy, Clone, Eq, PartialEq, Ord, PartialOrd)]
-pub enum WdtMode0 {
+pub enum WdtMode {
     #[doc = "Do nothing"]
     NOTHING = 0,
     #[doc = "Assert WDT_INTx"]
@@ -10,9 +10,9 @@ pub enum WdtMode0 {
     #[doc = "Assert WDT_INTx, assert WDT Reset after 3rd unhandled interrupt. Not supported - here for Backwards compatibility."]
     INT_THEN_RESET = 0x03,
 }
-impl WdtMode0 {
+impl WdtMode {
     #[inline(always)]
-    pub const fn from_bits(val: u8) -> WdtMode0 {
+    pub const fn from_bits(val: u8) -> WdtMode {
         unsafe { core::mem::transmute(val & 0x03) }
     }
     #[inline(always)]
@@ -20,50 +20,16 @@ impl WdtMode0 {
         unsafe { core::mem::transmute(self) }
     }
 }
-impl From<u8> for WdtMode0 {
+impl From<u8> for WdtMode {
     #[inline(always)]
-    fn from(val: u8) -> WdtMode0 {
-        WdtMode0::from_bits(val)
+    fn from(val: u8) -> WdtMode {
+        WdtMode::from_bits(val)
     }
 }
-impl From<WdtMode0> for u8 {
+impl From<WdtMode> for u8 {
     #[inline(always)]
-    fn from(val: WdtMode0) -> u8 {
-        WdtMode0::to_bits(val)
-    }
-}
-#[repr(u8)]
-#[derive(Copy, Clone, Eq, PartialEq, Ord, PartialOrd)]
-pub enum WdtMode1 {
-    #[doc = "Do nothing"]
-    NOTHING = 0,
-    #[doc = "Assert WDT_INTx"]
-    INT = 0x01,
-    #[doc = "Assert WDT Reset - Not Supported - here for backwards compatibility"]
-    RESET = 0x02,
-    #[doc = "Assert WDT_INTx, assert WDT Reset after 3rd unhandled interrupt - Not supported - here for backwards compatibility."]
-    INT_THEN_RESET = 0x03,
-}
-impl WdtMode1 {
-    #[inline(always)]
-    pub const fn from_bits(val: u8) -> WdtMode1 {
-        unsafe { core::mem::transmute(val & 0x03) }
-    }
-    #[inline(always)]
-    pub const fn to_bits(self) -> u8 {
-        unsafe { core::mem::transmute(self) }
-    }
-}
-impl From<u8> for WdtMode1 {
-    #[inline(always)]
-    fn from(val: u8) -> WdtMode1 {
-        WdtMode1::from_bits(val)
-    }
-}
-impl From<WdtMode1> for u8 {
-    #[inline(always)]
-    fn from(val: WdtMode1) -> u8 {
-        WdtMode1::to_bits(val)
+    fn from(val: WdtMode) -> u8 {
+        WdtMode::to_bits(val)
     }
 }
 #[repr(u8)]

@@ -34,5 +34,11 @@ transforms:
           from: gpio::vals::(Flt)?EdgeSel
           to: gpio::vals::EdgeSel
 
+      # === WCO ===
+      # TODO: Remove RESET and RESET_THEN_INT options from WdtMode
+      - !MergeEnums
+          from: wco::vals::WdtMode[0|1]
+          to: wco::vals::WdtMode
+
       # === Cleanup ===
       - !Sanitize

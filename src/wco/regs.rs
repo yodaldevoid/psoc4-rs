@@ -230,13 +230,13 @@ pub struct WdtConfig(pub u32);
 impl WdtConfig {
     #[doc = "Watchdog Counter Action on Match (WDT_CTR0=WDT_MATCH0)."]
     #[inline(always)]
-    pub const fn wdt_mode0(&self) -> super::vals::WdtMode0 {
+    pub const fn wdt_mode0(&self) -> super::vals::WdtMode {
         let val = (self.0 >> 0usize) & 0x03;
-        super::vals::WdtMode0::from_bits(val as u8)
+        super::vals::WdtMode::from_bits(val as u8)
     }
     #[doc = "Watchdog Counter Action on Match (WDT_CTR0=WDT_MATCH0)."]
     #[inline(always)]
-    pub fn set_wdt_mode0(&mut self, val: super::vals::WdtMode0) {
+    pub fn set_wdt_mode0(&mut self, val: super::vals::WdtMode) {
         self.0 = (self.0 & !(0x03 << 0usize)) | (((val.to_bits() as u32) & 0x03) << 0usize);
     }
     #[doc = "Clear Watchdog Counter when WDT_CTR0=WDT_MATCH0. In other words WDT_CTR0 divides LFCLK by (WDT_MATCH0+1). 0: Free running counter 1: Clear on match"]
@@ -263,13 +263,13 @@ impl WdtConfig {
     }
     #[doc = "Watchdog Counter Action on Match (WDT_CTR1=WDT_MATCH1)."]
     #[inline(always)]
-    pub const fn wdt_mode1(&self) -> super::vals::WdtMode1 {
+    pub const fn wdt_mode1(&self) -> super::vals::WdtMode {
         let val = (self.0 >> 8usize) & 0x03;
-        super::vals::WdtMode1::from_bits(val as u8)
+        super::vals::WdtMode::from_bits(val as u8)
     }
     #[doc = "Watchdog Counter Action on Match (WDT_CTR1=WDT_MATCH1)."]
     #[inline(always)]
-    pub fn set_wdt_mode1(&mut self, val: super::vals::WdtMode1) {
+    pub fn set_wdt_mode1(&mut self, val: super::vals::WdtMode) {
         self.0 = (self.0 & !(0x03 << 8usize)) | (((val.to_bits() as u32) & 0x03) << 8usize);
     }
     #[doc = "Clear Watchdog Counter when WDT_CTR1=WDT_MATCH1. In other words WDT_CTR1 divides LFCLK by (WDT_MATCH1+1). 0: Free running counter 1: Clear on match"]

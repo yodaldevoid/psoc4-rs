@@ -7,7 +7,7 @@ pub enum WdtMode {
     INT = 0x01,
     #[doc = "Assert WDT Reset - Not Supported - here for backwards compatibility"]
     RESET = 0x02,
-    #[doc = "Assert WDT_INTx, assert WDT Reset after 3rd unhandled interrupt. Not supported - here for Backwards compatibility."]
+    #[doc = "Assert WDT_INTx, assert WDT Reset after 3rd unhandled interrupt - Not supported - here for backwards compatibility."]
     INT_THEN_RESET = 0x03,
 }
 impl WdtMode {

@@ -49,6 +49,14 @@ transforms:
     - !MergeEnums
         from: wco::vals::WdtMode[0|1]
         to: wco::vals::WdtMode
+    - !MakeFieldArray
+        fieldsets: wco::regs::Wdt(Control|Ctrlow|Match)
+        from: wdt_(.*)\d
+        to: wdt_$1
+    - !MakeFieldArray
+        fieldsets: wco::regs::WdtConfig
+        from: wdt_((mode|clear))[0|1]
+        to: wdt_$1
 
     # === Cleanup ===
     - !Sanitize

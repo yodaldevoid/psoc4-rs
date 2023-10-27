@@ -230,25 +230,33 @@ pub struct WdtConfig(pub u32);
 impl WdtConfig {
     #[doc = "Watchdog Counter Action on Match (WDT_CTR0=WDT_MATCH0)."]
     #[inline(always)]
-    pub const fn wdt_mode0(&self) -> super::vals::WdtMode {
-        let val = (self.0 >> 0usize) & 0x03;
+    pub const fn wdt_mode(&self, n: usize) -> super::vals::WdtMode {
+        assert!(n < 2usize);
+        let offs = 0usize + n * 8usize;
+        let val = (self.0 >> offs) & 0x03;
         super::vals::WdtMode::from_bits(val as u8)
     }
     #[doc = "Watchdog Counter Action on Match (WDT_CTR0=WDT_MATCH0)."]
     #[inline(always)]
-    pub fn set_wdt_mode0(&mut self, val: super::vals::WdtMode) {
-        self.0 = (self.0 & !(0x03 << 0usize)) | (((val.to_bits() as u32) & 0x03) << 0usize);
+    pub fn set_wdt_mode(&mut self, n: usize, val: super::vals::WdtMode) {
+        assert!(n < 2usize);
+        let offs = 0usize + n * 8usize;
+        self.0 = (self.0 & !(0x03 << offs)) | (((val.to_bits() as u32) & 0x03) << offs);
     }
     #[doc = "Clear Watchdog Counter when WDT_CTR0=WDT_MATCH0. In other words WDT_CTR0 divides LFCLK by (WDT_MATCH0+1). 0: Free running counter 1: Clear on match"]
     #[inline(always)]
-    pub const fn wdt_clear0(&self) -> bool {
-        let val = (self.0 >> 2usize) & 0x01;
+    pub const fn wdt_clear(&self, n: usize) -> bool {
+        assert!(n < 2usize);
+        let offs = 2usize + n * 8usize;
+        let val = (self.0 >> offs) & 0x01;
         val != 0
     }
     #[doc = "Clear Watchdog Counter when WDT_CTR0=WDT_MATCH0. In other words WDT_CTR0 divides LFCLK by (WDT_MATCH0+1). 0: Free running counter 1: Clear on match"]
     #[inline(always)]
-    pub fn set_wdt_clear0(&mut self, val: bool) {
-        self.0 = (self.0 & !(0x01 << 2usize)) | (((val as u32) & 0x01) << 2usize);
+    pub fn set_wdt_clear(&mut self, n: usize, val: bool) {
+        assert!(n < 2usize);
+        let offs = 2usize + n * 8usize;
+        self.0 = (self.0 & !(0x01 << offs)) | (((val as u32) & 0x01) << offs);
     }
     #[doc = "Cascade Watchdog Counters 0,1. Counter 1 increments the cycle after WDT_CTR0=WDT_MATCH0. 0: Independent counters 1: Cascaded counters"]
     #[inline(always)]
@@ -260,28 +268,6 @@ impl WdtConfig {
     #[inline(always)]
     pub fn set_wdt_cascade0_1(&mut self, val: bool) {
         self.0 = (self.0 & !(0x01 << 3usize)) | (((val as u32) & 0x01) << 3usize);
-    }
-    #[doc = "Watchdog Counter Action on Match (WDT_CTR1=WDT_MATCH1)."]
-    #[inline(always)]
-    pub const fn wdt_mode1(&self) -> super::vals::WdtMode {
-        let val = (self.0 >> 8usize) & 0x03;
-        super::vals::WdtMode::from_bits(val as u8)
-    }
-    #[doc = "Watchdog Counter Action on Match (WDT_CTR1=WDT_MATCH1)."]
-    #[inline(always)]
-    pub fn set_wdt_mode1(&mut self, val: super::vals::WdtMode) {
-        self.0 = (self.0 & !(0x03 << 8usize)) | (((val.to_bits() as u32) & 0x03) << 8usize);
-    }
-    #[doc = "Clear Watchdog Counter when WDT_CTR1=WDT_MATCH1. In other words WDT_CTR1 divides LFCLK by (WDT_MATCH1+1). 0: Free running counter 1: Clear on match"]
-    #[inline(always)]
-    pub const fn wdt_clear1(&self) -> bool {
-        let val = (self.0 >> 10usize) & 0x01;
-        val != 0
-    }
-    #[doc = "Clear Watchdog Counter when WDT_CTR1=WDT_MATCH1. In other words WDT_CTR1 divides LFCLK by (WDT_MATCH1+1). 0: Free running counter 1: Clear on match"]
-    #[inline(always)]
-    pub fn set_wdt_clear1(&mut self, val: bool) {
-        self.0 = (self.0 & !(0x01 << 10usize)) | (((val as u32) & 0x01) << 10usize);
     }
     #[doc = "Cascade Watchdog Counters 1,2. Counter 2 increments the cycle after WDT_CTR1=WDT_MATCH1. It is allowed to cascade all three WDT counters. 0: Independent counters 1: Cascaded counters. When cascading all three counters, WDT_CLEAR1 must be 1"]
     #[inline(always)]
@@ -341,135 +327,63 @@ pub struct WdtControl(pub u32);
 impl WdtControl {
     #[doc = "Enable Counter 0 0: Counter is disabled (not clocked) 1: Counter is enabled (counting up) Note: This field takes considerable time (up to 3 LFCLK cycles) to take effect. It must not be changed more than once in that period."]
     #[inline(always)]
-    pub const fn wdt_enable0(&self) -> bool {
-        let val = (self.0 >> 0usize) & 0x01;
+    pub const fn wdt_enable(&self, n: usize) -> bool {
+        assert!(n < 3usize);
+        let offs = 0usize + n * 8usize;
+        let val = (self.0 >> offs) & 0x01;
         val != 0
     }
     #[doc = "Enable Counter 0 0: Counter is disabled (not clocked) 1: Counter is enabled (counting up) Note: This field takes considerable time (up to 3 LFCLK cycles) to take effect. It must not be changed more than once in that period."]
     #[inline(always)]
-    pub fn set_wdt_enable0(&mut self, val: bool) {
-        self.0 = (self.0 & !(0x01 << 0usize)) | (((val as u32) & 0x01) << 0usize);
+    pub fn set_wdt_enable(&mut self, n: usize, val: bool) {
+        assert!(n < 3usize);
+        let offs = 0usize + n * 8usize;
+        self.0 = (self.0 & !(0x01 << offs)) | (((val as u32) & 0x01) << offs);
     }
     #[doc = "Indicates actual state of counter. May lag WDT_ENABLE0 by up to 3 LFCLK cycles. After changing WDT_ENABLE0, do not enter DEEPSLEEP mode until this field acknowledges the change."]
     #[inline(always)]
-    pub const fn wdt_enabled0(&self) -> bool {
-        let val = (self.0 >> 1usize) & 0x01;
+    pub const fn wdt_enabled(&self, n: usize) -> bool {
+        assert!(n < 3usize);
+        let offs = 1usize + n * 8usize;
+        let val = (self.0 >> offs) & 0x01;
         val != 0
     }
     #[doc = "Indicates actual state of counter. May lag WDT_ENABLE0 by up to 3 LFCLK cycles. After changing WDT_ENABLE0, do not enter DEEPSLEEP mode until this field acknowledges the change."]
     #[inline(always)]
-    pub fn set_wdt_enabled0(&mut self, val: bool) {
-        self.0 = (self.0 & !(0x01 << 1usize)) | (((val as u32) & 0x01) << 1usize);
+    pub fn set_wdt_enabled(&mut self, n: usize, val: bool) {
+        assert!(n < 3usize);
+        let offs = 1usize + n * 8usize;
+        self.0 = (self.0 & !(0x01 << offs)) | (((val as u32) & 0x01) << offs);
     }
     #[doc = "WDT Interrupt Request. This bit is set by hardware as configured by this registers. This bit must be cleared by firmware. Clearing this bit also prevents Reset from happening when WDT_MODEx=3. After W1C, WDT_CONTROL must be read for the hardware to internally remove the clear flag. Failure to do this may result in missing the next interrupt."]
     #[inline(always)]
-    pub const fn wdt_int0(&self) -> bool {
-        let val = (self.0 >> 2usize) & 0x01;
+    pub const fn wdt_int(&self, n: usize) -> bool {
+        assert!(n < 3usize);
+        let offs = 2usize + n * 8usize;
+        let val = (self.0 >> offs) & 0x01;
         val != 0
     }
     #[doc = "WDT Interrupt Request. This bit is set by hardware as configured by this registers. This bit must be cleared by firmware. Clearing this bit also prevents Reset from happening when WDT_MODEx=3. After W1C, WDT_CONTROL must be read for the hardware to internally remove the clear flag. Failure to do this may result in missing the next interrupt."]
     #[inline(always)]
-    pub fn set_wdt_int0(&mut self, val: bool) {
-        self.0 = (self.0 & !(0x01 << 2usize)) | (((val as u32) & 0x01) << 2usize);
+    pub fn set_wdt_int(&mut self, n: usize, val: bool) {
+        assert!(n < 3usize);
+        let offs = 2usize + n * 8usize;
+        self.0 = (self.0 & !(0x01 << offs)) | (((val as u32) & 0x01) << offs);
     }
     #[doc = "Resets counter 0 back to 0000. Hardware will reset this bit after counter was reset. This will take several LFCLK cycles to take effect. Wait until the reset completes before enabling the WDT."]
     #[inline(always)]
-    pub const fn wdt_reset0(&self) -> bool {
-        let val = (self.0 >> 3usize) & 0x01;
+    pub const fn wdt_reset(&self, n: usize) -> bool {
+        assert!(n < 3usize);
+        let offs = 3usize + n * 8usize;
+        let val = (self.0 >> offs) & 0x01;
         val != 0
     }
     #[doc = "Resets counter 0 back to 0000. Hardware will reset this bit after counter was reset. This will take several LFCLK cycles to take effect. Wait until the reset completes before enabling the WDT."]
     #[inline(always)]
-    pub fn set_wdt_reset0(&mut self, val: bool) {
-        self.0 = (self.0 & !(0x01 << 3usize)) | (((val as u32) & 0x01) << 3usize);
-    }
-    #[doc = "Enable Counter 1 0: Counter is disabled (not clocked) 1: Counter is enabled (counting up) Note: This field takes considerable time (up to 3 LFCLK cycles) to take effect. It must not be changed more than once in that period."]
-    #[inline(always)]
-    pub const fn wdt_enable1(&self) -> bool {
-        let val = (self.0 >> 8usize) & 0x01;
-        val != 0
-    }
-    #[doc = "Enable Counter 1 0: Counter is disabled (not clocked) 1: Counter is enabled (counting up) Note: This field takes considerable time (up to 3 LFCLK cycles) to take effect. It must not be changed more than once in that period."]
-    #[inline(always)]
-    pub fn set_wdt_enable1(&mut self, val: bool) {
-        self.0 = (self.0 & !(0x01 << 8usize)) | (((val as u32) & 0x01) << 8usize);
-    }
-    #[doc = "Indicates actual state of counter. May lag WDT_ENABLE1 by up to 3 LFCLK cycles. After changing WDT_ENABLE1, do not enter DEEPSLEEP mode until this field acknowledges the change."]
-    #[inline(always)]
-    pub const fn wdt_enabled1(&self) -> bool {
-        let val = (self.0 >> 9usize) & 0x01;
-        val != 0
-    }
-    #[doc = "Indicates actual state of counter. May lag WDT_ENABLE1 by up to 3 LFCLK cycles. After changing WDT_ENABLE1, do not enter DEEPSLEEP mode until this field acknowledges the change."]
-    #[inline(always)]
-    pub fn set_wdt_enabled1(&mut self, val: bool) {
-        self.0 = (self.0 & !(0x01 << 9usize)) | (((val as u32) & 0x01) << 9usize);
-    }
-    #[doc = "WDT Interrupt Request. This bit is set by hardware as configured by this registers. This bit must be cleared by firmware. After W1C, WDT_CONTROL must be read for the hardware to internally remove the clear flag. Failure to do this may result in missing the next interrupt."]
-    #[inline(always)]
-    pub const fn wdt_int1(&self) -> bool {
-        let val = (self.0 >> 10usize) & 0x01;
-        val != 0
-    }
-    #[doc = "WDT Interrupt Request. This bit is set by hardware as configured by this registers. This bit must be cleared by firmware. After W1C, WDT_CONTROL must be read for the hardware to internally remove the clear flag. Failure to do this may result in missing the next interrupt."]
-    #[inline(always)]
-    pub fn set_wdt_int1(&mut self, val: bool) {
-        self.0 = (self.0 & !(0x01 << 10usize)) | (((val as u32) & 0x01) << 10usize);
-    }
-    #[doc = "Resets counter 1 back to 0000. Hardware will reset this bit after counter was reset. This will take several LFCLK cycles to take effect. Wait until the reset completes before enabling the WDT."]
-    #[inline(always)]
-    pub const fn wdt_reset1(&self) -> bool {
-        let val = (self.0 >> 11usize) & 0x01;
-        val != 0
-    }
-    #[doc = "Resets counter 1 back to 0000. Hardware will reset this bit after counter was reset. This will take several LFCLK cycles to take effect. Wait until the reset completes before enabling the WDT."]
-    #[inline(always)]
-    pub fn set_wdt_reset1(&mut self, val: bool) {
-        self.0 = (self.0 & !(0x01 << 11usize)) | (((val as u32) & 0x01) << 11usize);
-    }
-    #[doc = "Enable Counter 2 0: Counter is disabled (not clocked) 1: Counter is enabled (counting up) Note: This field takes considerable time (up to 3 LFCLK cycles) to take effect. It must not be changed more than once in that period."]
-    #[inline(always)]
-    pub const fn wdt_enable2(&self) -> bool {
-        let val = (self.0 >> 16usize) & 0x01;
-        val != 0
-    }
-    #[doc = "Enable Counter 2 0: Counter is disabled (not clocked) 1: Counter is enabled (counting up) Note: This field takes considerable time (up to 3 LFCLK cycles) to take effect. It must not be changed more than once in that period."]
-    #[inline(always)]
-    pub fn set_wdt_enable2(&mut self, val: bool) {
-        self.0 = (self.0 & !(0x01 << 16usize)) | (((val as u32) & 0x01) << 16usize);
-    }
-    #[doc = "Indicates actual state of counter. May lag WDT_ENABLE2 by up to 3 LFCLK cycles. After changing WDT_ENABLE2, do not enter DEEPSLEEP mode until this field acknowledges the change."]
-    #[inline(always)]
-    pub const fn wdt_enabled2(&self) -> bool {
-        let val = (self.0 >> 17usize) & 0x01;
-        val != 0
-    }
-    #[doc = "Indicates actual state of counter. May lag WDT_ENABLE2 by up to 3 LFCLK cycles. After changing WDT_ENABLE2, do not enter DEEPSLEEP mode until this field acknowledges the change."]
-    #[inline(always)]
-    pub fn set_wdt_enabled2(&mut self, val: bool) {
-        self.0 = (self.0 & !(0x01 << 17usize)) | (((val as u32) & 0x01) << 17usize);
-    }
-    #[doc = "WDT Interrupt Request. This bit is set by hardware as configured by this registers. This bit must be cleared by firmware. After W1C, WDT_CONTROL must be read for the hardware to internally remove the clear flag. Failure to do this may result in missing the next interrupt."]
-    #[inline(always)]
-    pub const fn wdt_int2(&self) -> bool {
-        let val = (self.0 >> 18usize) & 0x01;
-        val != 0
-    }
-    #[doc = "WDT Interrupt Request. This bit is set by hardware as configured by this registers. This bit must be cleared by firmware. After W1C, WDT_CONTROL must be read for the hardware to internally remove the clear flag. Failure to do this may result in missing the next interrupt."]
-    #[inline(always)]
-    pub fn set_wdt_int2(&mut self, val: bool) {
-        self.0 = (self.0 & !(0x01 << 18usize)) | (((val as u32) & 0x01) << 18usize);
-    }
-    #[doc = "Resets counter 2 back to 0000_0000. Hardware will reset this bit after counter was reset. This will take several LFCLK cycles to take effect. Wait until the reset completes before enabling the WDT."]
-    #[inline(always)]
-    pub const fn wdt_reset2(&self) -> bool {
-        let val = (self.0 >> 19usize) & 0x01;
-        val != 0
-    }
-    #[doc = "Resets counter 2 back to 0000_0000. Hardware will reset this bit after counter was reset. This will take several LFCLK cycles to take effect. Wait until the reset completes before enabling the WDT."]
-    #[inline(always)]
-    pub fn set_wdt_reset2(&mut self, val: bool) {
-        self.0 = (self.0 & !(0x01 << 19usize)) | (((val as u32) & 0x01) << 19usize);
+    pub fn set_wdt_reset(&mut self, n: usize, val: bool) {
+        assert!(n < 3usize);
+        let offs = 3usize + n * 8usize;
+        self.0 = (self.0 & !(0x01 << offs)) | (((val as u32) & 0x01) << offs);
     }
 }
 impl Default for WdtControl {
@@ -485,25 +399,18 @@ pub struct WdtCtrlow(pub u32);
 impl WdtCtrlow {
     #[doc = "Current value of WDT Counter 0"]
     #[inline(always)]
-    pub const fn wdt_ctr0(&self) -> u16 {
-        let val = (self.0 >> 0usize) & 0xffff;
+    pub const fn wdt_ctr(&self, n: usize) -> u16 {
+        assert!(n < 2usize);
+        let offs = 0usize + n * 16usize;
+        let val = (self.0 >> offs) & 0xffff;
         val as u16
     }
     #[doc = "Current value of WDT Counter 0"]
     #[inline(always)]
-    pub fn set_wdt_ctr0(&mut self, val: u16) {
-        self.0 = (self.0 & !(0xffff << 0usize)) | (((val as u32) & 0xffff) << 0usize);
-    }
-    #[doc = "Current value of WDT Counter 1"]
-    #[inline(always)]
-    pub const fn wdt_ctr1(&self) -> u16 {
-        let val = (self.0 >> 16usize) & 0xffff;
-        val as u16
-    }
-    #[doc = "Current value of WDT Counter 1"]
-    #[inline(always)]
-    pub fn set_wdt_ctr1(&mut self, val: u16) {
-        self.0 = (self.0 & !(0xffff << 16usize)) | (((val as u32) & 0xffff) << 16usize);
+    pub fn set_wdt_ctr(&mut self, n: usize, val: u16) {
+        assert!(n < 2usize);
+        let offs = 0usize + n * 16usize;
+        self.0 = (self.0 & !(0xffff << offs)) | (((val as u32) & 0xffff) << offs);
     }
 }
 impl Default for WdtCtrlow {
@@ -519,25 +426,18 @@ pub struct WdtMatch(pub u32);
 impl WdtMatch {
     #[doc = "Match value for Watchdog Counter 0"]
     #[inline(always)]
-    pub const fn wdt_match0(&self) -> u16 {
-        let val = (self.0 >> 0usize) & 0xffff;
+    pub const fn wdt_match(&self, n: usize) -> u16 {
+        assert!(n < 2usize);
+        let offs = 0usize + n * 16usize;
+        let val = (self.0 >> offs) & 0xffff;
         val as u16
     }
     #[doc = "Match value for Watchdog Counter 0"]
     #[inline(always)]
-    pub fn set_wdt_match0(&mut self, val: u16) {
-        self.0 = (self.0 & !(0xffff << 0usize)) | (((val as u32) & 0xffff) << 0usize);
-    }
-    #[doc = "Match value for Watchdog Counter 1"]
-    #[inline(always)]
-    pub const fn wdt_match1(&self) -> u16 {
-        let val = (self.0 >> 16usize) & 0xffff;
-        val as u16
-    }
-    #[doc = "Match value for Watchdog Counter 1"]
-    #[inline(always)]
-    pub fn set_wdt_match1(&mut self, val: u16) {
-        self.0 = (self.0 & !(0xffff << 16usize)) | (((val as u32) & 0xffff) << 16usize);
+    pub fn set_wdt_match(&mut self, n: usize, val: u16) {
+        assert!(n < 2usize);
+        let offs = 0usize + n * 16usize;
+        self.0 = (self.0 & !(0xffff << offs)) | (((val as u32) & 0xffff) << offs);
     }
 }
 impl Default for WdtMatch {

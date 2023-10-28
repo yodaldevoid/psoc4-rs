@@ -20,9 +20,9 @@ static CLOCKS: Clocks = Clocks {
 pub struct ClockConfig {
     // Clock sources
     pub imo: Option<ImoConfig>,
-    // TODO: ext_clk: Option<(u32, ExtClkPin)>,
+    // TODO: ext_clk: Option<ExtClkConfig>,
     pub ilo: Option<IloConfig>,
-    pub wco: Option<WcoConfig>,
+    // TODO: wco: Option<WcoConfig>,
 
     // Derived clocks
     pub hf_clk: HfClkConfig,
@@ -55,8 +55,9 @@ impl ClockConfig {
     pub fn imo(freq: ImoFreq) -> Self {
         Self {
             imo: Some(ImoConfig { freq }),
+            // ext_clk: None,
             ilo: Some(IloConfig),
-            wco: None,
+            // wco: None,
             hf_clk: HfClkConfig {
                 src: HfClkSrc::Imo,
                 div: HfClkDiv::_4,
@@ -152,11 +153,14 @@ pub struct ImoConfig {
     // TODO: lock IMO to WCO
 }
 
+// TODO: pin
+// TODO: frequency
+// struct ExtClkConfig;
+
 pub struct IloConfig;
 
 // TODO: trimming
-// TODO: other config
-pub struct WcoConfig;
+// struct WcoConfig;
 
 #[non_exhaustive]
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]

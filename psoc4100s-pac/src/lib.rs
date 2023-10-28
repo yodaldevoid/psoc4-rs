@@ -69,9 +69,9 @@ pub const TCPWM: tcpwm::Tcpwm = unsafe { tcpwm::Tcpwm::from_ptr(0x4006_0000 as u
 #[doc = "32KHz Oscillator"]
 pub const WCO: wco::Wco = unsafe { wco::Wco::from_ptr(0x4007_0000 as usize as _) };
 #[doc = "Serial Communications Block (SPI/UART/I2C)"]
-pub const SCB0: scb0::Scb0 = unsafe { scb0::Scb0::from_ptr(0x4008_0000 as usize as _) };
-pub const SCB1: scb0::Scb0 = unsafe { scb0::Scb0::from_ptr(0x4009_0000 as usize as _) };
-pub const SCB2: scb0::Scb0 = unsafe { scb0::Scb0::from_ptr(0x400a_0000 as usize as _) };
+pub const SCB0: scb::Scb = unsafe { scb::Scb::from_ptr(0x4008_0000 as usize as _) };
+pub const SCB1: scb::Scb = unsafe { scb::Scb::from_ptr(0x4009_0000 as usize as _) };
+pub const SCB2: scb::Scb = unsafe { scb::Scb::from_ptr(0x400a_0000 as usize as _) };
 #[doc = "LCD Controller Block"]
 pub const LCD: lcd::Lcd = unsafe { lcd::Lcd::from_ptr(0x400b_0000 as usize as _) };
 #[doc = "Capsense Controller"]
@@ -107,7 +107,7 @@ pub mod pass0;
 pub mod peri;
 pub mod prgio;
 pub mod sar0;
-pub mod scb0;
+pub mod scb;
 pub mod sflash;
 pub mod spcif;
 pub mod srsslt;

@@ -1,11 +1,11 @@
 #[doc = "Serial Communications Block (SPI/UART/I2C)"]
 #[derive(Copy, Clone, Eq, PartialEq)]
-pub struct Scb0 {
+pub struct Scb {
     ptr: *mut u8,
 }
-unsafe impl Send for Scb0 {}
-unsafe impl Sync for Scb0 {}
-impl Scb0 {
+unsafe impl Send for Scb {}
+unsafe impl Sync for Scb {}
+impl Scb {
     #[inline(always)]
     pub const unsafe fn from_ptr(ptr: *mut ()) -> Self {
         Self { ptr: ptr as _ }

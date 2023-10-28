@@ -45,6 +45,14 @@ transforms:
         from: gpio::vals::(Flt)?EdgeSel
         to: gpio::vals::EdgeSel
 
+    # === SCB ===
+    - !Rename
+        from: scb0::Scb0
+        to: scb0::Scb
+    - !Rename
+        from: scb0::(.*)
+        to: scb::$1
+
     # === WCO ===
     - !MergeEnums
         from: wco::vals::WdtMode[0|1]

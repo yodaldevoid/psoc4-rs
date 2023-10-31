@@ -8,6 +8,7 @@ use embassy_sync::waitqueue::AtomicWaker;
 
 use crate::interrupt::InterruptExt;
 use crate::pac::gpio::vals::*;
+use crate::pac::hsiom::vals::*;
 use crate::{interrupt, pac, peripherals, Peripheral};
 
 const NEW_AW: AtomicWaker = AtomicWaker::new();
@@ -650,6 +651,9 @@ impl<'d, T: Pin> Flex<'d, T> {
         pin.prt()
             .pc()
             .modify(|r| r.set_dm(pin.pin() as usize, Dm::INPUT));
+        pin.hsiom()
+            .port_sel()
+            .modify(|r| r.set_io_sel(pin.pin() as usize, IoSel::GPIO));
         Self { pin }
     }
 
@@ -818,8 +822,14 @@ pub(crate) mod sealed {
             }
         }
 
+        #[inline]
         fn prt(&self) -> pac::gpio::Prt {
             crate::pac::GPIO.prt(self._port() as _)
+        }
+
+        #[inline]
+        fn hsiom(&self) -> pac::hsiom::Prt {
+            crate::pac::HSIOM.prt(self._port() as _)
         }
     }
 }

@@ -368,13 +368,13 @@ pub(crate) unsafe fn init(config: ClockConfig) {
             peri.div_16_ctl(n as usize)
                 .write(|r| r.set_int16_div(config.integer));
             peri.div_cmd().write(|r| {
-                r.set_sel_type(1);
+                r.set_sel_type(PeriClkDivType::_16 as u8);
                 r.set_sel_div(n as u8);
                 r.set_enable(true);
             });
         } else {
             peri.div_cmd().write(|r| {
-                r.set_sel_type(1);
+                r.set_sel_type(PeriClkDivType::_16 as u8);
                 r.set_sel_div(n as u8);
                 r.set_disable(true);
             });
@@ -387,13 +387,13 @@ pub(crate) unsafe fn init(config: ClockConfig) {
                 r.set_frac5_div(config.frac);
             });
             peri.div_cmd().write(|r| {
-                r.set_sel_type(1);
+                r.set_sel_type(PeriClkDivType::_16_5 as u8);
                 r.set_sel_div(n as u8);
                 r.set_enable(true);
             });
         } else {
             peri.div_cmd().write(|r| {
-                r.set_sel_type(2);
+                r.set_sel_type(PeriClkDivType::_16_5 as u8);
                 r.set_sel_div(n as u8);
                 r.set_disable(true);
             });

@@ -83,91 +83,18 @@ pub struct PortSel(pub u32);
 impl PortSel {
     #[doc = "Selects connection for IO pad 0 route."]
     #[inline(always)]
-    pub const fn io0_sel(&self) -> super::vals::Io0sel {
-        let val = (self.0 >> 0usize) & 0x0f;
-        super::vals::Io0sel::from_bits(val as u8)
+    pub const fn io_sel(&self, n: usize) -> super::vals::IoSel {
+        assert!(n < 8usize);
+        let offs = 0usize + n * 4usize;
+        let val = (self.0 >> offs) & 0x0f;
+        super::vals::IoSel::from_bits(val as u8)
     }
     #[doc = "Selects connection for IO pad 0 route."]
     #[inline(always)]
-    pub fn set_io0_sel(&mut self, val: super::vals::Io0sel) {
-        self.0 = (self.0 & !(0x0f << 0usize)) | (((val.to_bits() as u32) & 0x0f) << 0usize);
-    }
-    #[doc = "Selects connection for IO pad 1 route."]
-    #[inline(always)]
-    pub const fn io1_sel(&self) -> u8 {
-        let val = (self.0 >> 4usize) & 0x0f;
-        val as u8
-    }
-    #[doc = "Selects connection for IO pad 1 route."]
-    #[inline(always)]
-    pub fn set_io1_sel(&mut self, val: u8) {
-        self.0 = (self.0 & !(0x0f << 4usize)) | (((val as u32) & 0x0f) << 4usize);
-    }
-    #[doc = "Selects connection for IO pad 2 route."]
-    #[inline(always)]
-    pub const fn io2_sel(&self) -> u8 {
-        let val = (self.0 >> 8usize) & 0x0f;
-        val as u8
-    }
-    #[doc = "Selects connection for IO pad 2 route."]
-    #[inline(always)]
-    pub fn set_io2_sel(&mut self, val: u8) {
-        self.0 = (self.0 & !(0x0f << 8usize)) | (((val as u32) & 0x0f) << 8usize);
-    }
-    #[doc = "Selects connection for IO pad 3 route."]
-    #[inline(always)]
-    pub const fn io3_sel(&self) -> u8 {
-        let val = (self.0 >> 12usize) & 0x0f;
-        val as u8
-    }
-    #[doc = "Selects connection for IO pad 3 route."]
-    #[inline(always)]
-    pub fn set_io3_sel(&mut self, val: u8) {
-        self.0 = (self.0 & !(0x0f << 12usize)) | (((val as u32) & 0x0f) << 12usize);
-    }
-    #[doc = "Selects connection for IO pad 4 route."]
-    #[inline(always)]
-    pub const fn io4_sel(&self) -> u8 {
-        let val = (self.0 >> 16usize) & 0x0f;
-        val as u8
-    }
-    #[doc = "Selects connection for IO pad 4 route."]
-    #[inline(always)]
-    pub fn set_io4_sel(&mut self, val: u8) {
-        self.0 = (self.0 & !(0x0f << 16usize)) | (((val as u32) & 0x0f) << 16usize);
-    }
-    #[doc = "Selects connection for IO pad 5 route."]
-    #[inline(always)]
-    pub const fn io5_sel(&self) -> u8 {
-        let val = (self.0 >> 20usize) & 0x0f;
-        val as u8
-    }
-    #[doc = "Selects connection for IO pad 5 route."]
-    #[inline(always)]
-    pub fn set_io5_sel(&mut self, val: u8) {
-        self.0 = (self.0 & !(0x0f << 20usize)) | (((val as u32) & 0x0f) << 20usize);
-    }
-    #[doc = "Selects connection for IO pad 6 route."]
-    #[inline(always)]
-    pub const fn io6_sel(&self) -> u8 {
-        let val = (self.0 >> 24usize) & 0x0f;
-        val as u8
-    }
-    #[doc = "Selects connection for IO pad 6 route."]
-    #[inline(always)]
-    pub fn set_io6_sel(&mut self, val: u8) {
-        self.0 = (self.0 & !(0x0f << 24usize)) | (((val as u32) & 0x0f) << 24usize);
-    }
-    #[doc = "Selects connection for IO pad 7 route."]
-    #[inline(always)]
-    pub const fn io7_sel(&self) -> u8 {
-        let val = (self.0 >> 28usize) & 0x0f;
-        val as u8
-    }
-    #[doc = "Selects connection for IO pad 7 route."]
-    #[inline(always)]
-    pub fn set_io7_sel(&mut self, val: u8) {
-        self.0 = (self.0 & !(0x0f << 28usize)) | (((val as u32) & 0x0f) << 28usize);
+    pub fn set_io_sel(&mut self, n: usize, val: super::vals::IoSel) {
+        assert!(n < 8usize);
+        let offs = 0usize + n * 4usize;
+        self.0 = (self.0 & !(0x0f << offs)) | (((val.to_bits() as u32) & 0x0f) << offs);
     }
 }
 impl Default for PortSel {

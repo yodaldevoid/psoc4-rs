@@ -45,6 +45,15 @@ transforms:
         from: gpio::vals::(Flt)?EdgeSel
         to: gpio::vals::EdgeSel
 
+    # === HSIOM ===
+    - !MakeFieldArray
+        fieldsets: hsiom::regs::PortSel
+        from: io\d+_sel
+        to: io_sel
+    - !Rename
+        from: hsiom::vals::Io0Sel
+        to: hsiom::vals::IoSel
+
     # === SCB ===
     - !Rename
         from: scb0::Scb0

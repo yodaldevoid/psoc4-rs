@@ -1,6 +1,6 @@
 #[repr(u8)]
 #[derive(Copy, Clone, Eq, PartialEq, Ord, PartialOrd)]
-pub enum Io0sel {
+pub enum IoSel {
     #[doc = "SW controlled GPIO."]
     GPIO = 0,
     #[doc = "SW controlled 'out', DSI controlled 'oe_n'."]
@@ -34,9 +34,9 @@ pub enum Io0sel {
     #[doc = "Chip specific DeepSleep source 3 connection."]
     DS_3 = 0x0f,
 }
-impl Io0sel {
+impl IoSel {
     #[inline(always)]
-    pub const fn from_bits(val: u8) -> Io0sel {
+    pub const fn from_bits(val: u8) -> IoSel {
         unsafe { core::mem::transmute(val & 0x0f) }
     }
     #[inline(always)]
@@ -44,15 +44,15 @@ impl Io0sel {
         unsafe { core::mem::transmute(self) }
     }
 }
-impl From<u8> for Io0sel {
+impl From<u8> for IoSel {
     #[inline(always)]
-    fn from(val: u8) -> Io0sel {
-        Io0sel::from_bits(val)
+    fn from(val: u8) -> IoSel {
+        IoSel::from_bits(val)
     }
 }
-impl From<Io0sel> for u8 {
+impl From<IoSel> for u8 {
     #[inline(always)]
-    fn from(val: Io0sel) -> u8 {
-        Io0sel::to_bits(val)
+    fn from(val: IoSel) -> u8 {
+        IoSel::to_bits(val)
     }
 }

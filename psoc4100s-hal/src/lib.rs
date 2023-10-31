@@ -113,15 +113,6 @@ embassy_hal_internal::peripherals! {
     SCB1,
     SCB2,
 
-    DMA_CH0,
-    DMA_CH1,
-    DMA_CH2,
-    DMA_CH3,
-    DMA_CH4,
-    DMA_CH5,
-    DMA_CH6,
-    DMA_CH7,
-
     PRGIO0,
     PRGIO1,
 

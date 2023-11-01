@@ -20,6 +20,8 @@ pub(crate) use psoc4100s_pac as pac;
 #[cfg(feature = "rt")]
 pub use crate::pac::NVIC_PRIO_BITS;
 
+use crate::clocks::Imo;
+
 embassy_hal_internal::interrupt_mod!(
     IOSS_INTERRUPTS_GPIO_0,
     IOSS_INTERRUPTS_GPIO_1,
@@ -113,10 +115,14 @@ embassy_hal_internal::peripherals! {
     SCB1,
     SCB2,
 
-    PRGIO0,
-    PRGIO1,
+    PRGIO2,
+    PRGIO3,
 
-    TCPWM,
+    TCPWM0,
+    TCPWM1,
+    TCPWM2,
+    TCPWM3,
+    TCPWM4,
 
     LCD,
 
@@ -133,29 +139,23 @@ embassy_hal_internal::peripherals! {
 }
 
 pub mod config {
-    use crate::clocks::{ClockConfig, ImoFreq};
-
     #[non_exhaustive]
-    pub struct Config {
-        pub clocks: ClockConfig,
-    }
+    pub struct Config {}
 
     impl Default for Config {
         fn default() -> Self {
-            Self {
-                clocks: ClockConfig::imo(ImoFreq::_24_MHz),
-            }
+            Self {}
         }
     }
 
     impl Config {
-        pub fn new(clocks: ClockConfig) -> Self {
-            Self { clocks }
+        pub fn new() -> Self {
+            Self {}
         }
     }
 }
 
-pub fn init(config: config::Config) -> Peripherals {
+pub fn init(_config: config::Config) -> (Imo, Peripherals) {
     // Do this first, so that it panics if user is calling `init` a second time
     // before doing anything important.
     let peripherals = Peripherals::take();
@@ -165,12 +165,11 @@ pub fn init(config: config::Config) -> Peripherals {
         // variables takes too long. That said, with reset values and wrost-case ILO
         // inaccuracy, we have ~2.1 seconds to get to this point.
         watchdog::init();
-        clocks::init(config.clocks);
         #[cfg(any(feature = "time-driver-wdc-ilo", feature = "time-driver-wdc-wco"))]
         wdc::init();
         //dma::init();
         gpio::init();
-    }
+    };
 
-    peripherals
+    (Imo::new(), peripherals)
 }

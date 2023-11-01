@@ -6,7 +6,7 @@ use embassy_sync::blocking_mutex::Mutex;
 use embassy_time::driver::{AlarmHandle, Driver};
 use pac::wco::vals::*;
 
-use crate::clocks::{sys_clk_freq, wait_cycles, ILO_SLOW_FREQ_HZ, WCO_FREQ_HZ};
+use crate::clocks::{wait_cycles, ILO_SLOW_FREQ_HZ, WCO_FREQ_HZ};
 use crate::interrupt::InterruptExt;
 use crate::{interrupt, pac};
 
@@ -170,6 +170,7 @@ impl WdcTimerDriver {
     }
 }
 
+/// safety: must be called exactly once at bootup
 pub(crate) unsafe fn init() {
     critical_section::with(|cs| {
         for n in 0..ALARM_COUNT {
@@ -201,11 +202,13 @@ pub(crate) unsafe fn init() {
         r.set_clk_ilo_en_for_wdt(!use_wco);
     });
 
-    // Wait 4 LFCLK cycles.
+    // Wait 4 LFCLK cycles. Assumes this function was called at bootup so we are
+    // using the IMO clock set to 24 MHz with an HF clock divider of 1 and a
+    // SYS clock divider set to 1.
     let sysclk_cycles = if use_wco {
-        4 * sys_clk_freq() / WCO_FREQ_HZ
+        4 * 24_000_000 / WCO_FREQ_HZ
     } else {
-        4 * sys_clk_freq() / ILO_SLOW_FREQ_HZ
+        4 * 24_000_000 / ILO_SLOW_FREQ_HZ
     };
     wait_cycles(sysclk_cycles);
 

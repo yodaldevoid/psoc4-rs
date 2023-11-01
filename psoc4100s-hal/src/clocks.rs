@@ -1,89 +1,14 @@
 use core::arch::asm;
-use core::sync::atomic::{AtomicU32, Ordering};
+use core::marker::PhantomData;
 
-use crate::pac;
+use embassy_hal_internal::{into_ref, PeripheralRef};
+
+use crate::gpio::sealed::Pin as _;
+use crate::gpio::{AnyPin, Pin};
+use crate::pac::gpio::vals::Dm;
+use crate::pac::hsiom::vals::IoSel;
 use crate::pac::srsslt::vals::*;
-
-struct Clocks {
-    hf: AtomicU32,
-    sys: AtomicU32,
-    pump: AtomicU32,
-}
-
-static CLOCKS: Clocks = Clocks {
-    hf: AtomicU32::new(0),
-    sys: AtomicU32::new(0),
-    pump: AtomicU32::new(0),
-};
-
-#[non_exhaustive]
-pub struct ClockConfig {
-    // Clock sources
-    pub imo: Option<ImoConfig>,
-    // TODO: ext_clk: Option<ExtClkConfig>,
-    pub ilo: Option<IloConfig>,
-    // TODO: wco: Option<WcoConfig>,
-
-    // Derived clocks
-    pub hf_clk: HfClkConfig,
-    pub sys_clk: SysClkConfig,
-    pub pump_clk: PumpClkConfig,
-    // TODO: WDC source
-
-    // Peripheral clock dividers
-    // TODO: phase alignment for clock dividers
-    pub peri_clk_div_16: [Option<PeriClkDiv16Config>; 6],
-    pub peri_clk_div_16_5: [Option<PeriClkDiv16_5Config>; 3],
-
-    // Peripheral clocks
-    pub scb0_clk: Option<(PeriClkDivType, u8)>,
-    pub scb1_clk: Option<(PeriClkDivType, u8)>,
-    pub scb2_clk: Option<(PeriClkDivType, u8)>,
-    pub csd_clk: Option<(PeriClkDivType, u8)>,
-    pub tcpwm0_clk: Option<(PeriClkDivType, u8)>,
-    pub tcpwm1_clk: Option<(PeriClkDivType, u8)>,
-    pub tcpwm2_clk: Option<(PeriClkDivType, u8)>,
-    pub tcpwm3_clk: Option<(PeriClkDivType, u8)>,
-    pub tcpwm4_clk: Option<(PeriClkDivType, u8)>,
-    pub prgio2_clk: Option<(PeriClkDivType, u8)>,
-    pub prgio3_clk: Option<(PeriClkDivType, u8)>,
-    pub lcd_clk: Option<(PeriClkDivType, u8)>,
-    pub pass0_sar_clk: Option<(PeriClkDivType, u8)>,
-}
-
-impl ClockConfig {
-    pub fn imo(freq: ImoFreq) -> Self {
-        Self {
-            imo: Some(ImoConfig { freq }),
-            // ext_clk: None,
-            ilo: Some(IloConfig),
-            // wco: None,
-            hf_clk: HfClkConfig {
-                src: HfClkSrc::Imo,
-                div: HfClkDiv::_4,
-            },
-            sys_clk: SysClkConfig { div: SysClkDiv::_1 },
-            pump_clk: PumpClkConfig {
-                src: PumpClkSrc::Gnd,
-            },
-            peri_clk_div_16: [None; 6],
-            peri_clk_div_16_5: [None; 3],
-            scb0_clk: None,
-            scb1_clk: None,
-            scb2_clk: None,
-            csd_clk: None,
-            tcpwm0_clk: None,
-            tcpwm1_clk: None,
-            tcpwm2_clk: None,
-            tcpwm3_clk: None,
-            tcpwm4_clk: None,
-            prgio2_clk: None,
-            prgio3_clk: None,
-            lcd_clk: None,
-            pass0_sar_clk: None,
-        }
-    }
-}
+use crate::{pac, peripherals, Peripheral};
 
 #[allow(non_camel_case_types)]
 #[repr(u8)]
@@ -153,29 +78,12 @@ pub struct ImoConfig {
     // TODO: lock IMO to WCO
 }
 
-// TODO: pin
-// TODO: frequency
-// struct ExtClkConfig;
-
-pub struct IloConfig;
-
-// TODO: trimming
-// struct WcoConfig;
-
 #[non_exhaustive]
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct PllClkConfig {
     pub fb_div: u8,
     // TODO: actually 6 bits
     pub ref_clk_div: u8,
-}
-
-#[non_exhaustive]
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub enum HfClkSrc {
-    Imo,
-    ImoPll(PllClkConfig),
-    ExtClk,
 }
 
 #[repr(u8)]
@@ -190,14 +98,24 @@ pub enum HfClkDiv {
 
 impl HfClkDiv {
     #[inline(always)]
+    const fn div(&self) -> u32 {
+        match self {
+            HfClkDiv::_1 => 1,
+            HfClkDiv::_2 => 2,
+            HfClkDiv::_4 => 4,
+            HfClkDiv::_8 => 8,
+        }
+    }
+
+    #[inline(always)]
     const fn to_pac(self) -> HfclkDiv {
         unsafe { core::mem::transmute(self) }
     }
-}
 
-pub struct HfClkConfig {
-    pub src: HfClkSrc,
-    pub div: HfClkDiv,
+    #[inline(always)]
+    const fn from_pac(div: HfclkDiv) -> Self {
+        unsafe { core::mem::transmute(div) }
+    }
 }
 
 #[repr(u8)]
@@ -212,13 +130,24 @@ pub enum SysClkDiv {
 
 impl SysClkDiv {
     #[inline(always)]
+    const fn div(&self) -> u32 {
+        match self {
+            SysClkDiv::_1 => 1,
+            SysClkDiv::_2 => 2,
+            SysClkDiv::_4 => 4,
+            SysClkDiv::_8 => 8,
+        }
+    }
+
+    #[inline(always)]
     const fn to_pac(self) -> SysclkDiv {
         unsafe { core::mem::transmute(self) }
     }
-}
 
-pub struct SysClkConfig {
-    pub div: SysClkDiv,
+    #[inline(always)]
+    const fn from_pac(div: SysclkDiv) -> Self {
+        unsafe { core::mem::transmute(div) }
+    }
 }
 
 #[repr(u8)]
@@ -232,18 +161,14 @@ pub enum PumpClkSrc {
 
 impl PumpClkSrc {
     #[inline(always)]
-    const fn to_pac(self) -> PumpSel {
-        unsafe { core::mem::transmute(self) }
+    const fn from_pac(div: PumpSel) -> Self {
+        unsafe { core::mem::transmute(div) }
     }
-}
-
-pub struct PumpClkConfig {
-    pub src: PumpClkSrc,
 }
 
 #[derive(Clone, Copy, Debug)]
 pub struct PeriClkDiv16Config {
-    integer: u16,
+    pub integer: u16,
 }
 
 impl Default for PeriClkDiv16Config {
@@ -254,9 +179,9 @@ impl Default for PeriClkDiv16Config {
 
 #[derive(Clone, Copy, Debug)]
 pub struct PeriClkDiv16_5Config {
-    integer: u16,
+    pub integer: u16,
     // TODO: only 5 bits
-    frac: u8,
+    pub frac: u8,
 }
 
 impl Default for PeriClkDiv16_5Config {
@@ -268,157 +193,486 @@ impl Default for PeriClkDiv16_5Config {
     }
 }
 
-#[allow(non_camel_case_types)]
-#[non_exhaustive]
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub enum PeriClkDivType {
-    _16 = 1,
-    _16_5 = 2,
-}
-
-#[non_exhaustive]
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub enum PeriClk {
-    Scb0 = 0,
-    Scb1 = 1,
-    Scb2 = 2,
-    Csd = 3,
-    Tcpwm0 = 4,
-    Tcpwm1 = 5,
-    Tcpwm2 = 6,
-    Tcpwm3 = 7,
-    Tcpwm4 = 8,
-    Prgio2 = 9,
-    Prgio3 = 10,
-    Lcd = 11,
-    Pass0Sar = 12,
-}
-
-// TODO: record clock frequencies for peripheral calculations
-/// safety: must be called exactly once at bootup
-pub(crate) unsafe fn init(config: ClockConfig) {
-    // Clock configuration order selected to prevent turning off our current
-    // system clock during initial configuration.
-
-    let srsslt = pac::SRSSLT;
-    let peri = pac::PERI;
-
-    // Requires WDT to be disabled in order to disable.
-    #[cfg(not(feature = "time-driver-wdc-ilo"))]
-    srsslt
-        .clk_ilo_config()
-        .write(|r| r.set_enable(config.ilo.is_some()));
-    // Ignore the user configuration if the WDC clocked by the ILO has been
-    // selected for the embassy-time driver.
-    #[cfg(feature = "time-driver-wdc-ilo")]
-    srsslt.clk_ilo_config().write(|r| r.set_enable(true));
-
-    // TODO: configure WCO
-
-    // TODO: configure WDC source
-
-    // TODO: configure external clock
-
-    // TODO: configure PLL
-
-    // Pre-calculate the IMO frequency after applying settings to calculate the
-    // eventual system clock frequency.
-    let imo_freq = config.imo.as_ref().map(|c| c.freq.hz()).unwrap_or(0);
-
-    let hf_clk_div = 1 << config.hf_clk.div as u8;
-    let (hf_clk_sel, hf_clk_freq) = match config.hf_clk.src {
-        HfClkSrc::Imo => (HfclkSel::IMO, imo_freq / hf_clk_div),
-        _ => todo!(),
-    };
-    CLOCKS.hf.store(hf_clk_freq, Ordering::Relaxed);
-
-    let sys_clk_freq = hf_clk_freq / (1 << config.sys_clk.div as u8);
-
-    // TODO: read/calculate the current frequency. This calculation assumes we
-    // are performing startup initialization.
-    let current_sys_clk_freq = 24_000_000 / 4;
-    if sys_clk_freq > current_sys_clk_freq {
-        set_wait_states(sys_clk_freq);
+pub(crate) mod sealed {
+    pub trait HfClockSource {
+        fn frequency(&self) -> u32;
     }
 
-    srsslt.clk_select().write(|r| {
-        r.set_hfclk_sel(hf_clk_sel);
-        r.set_hfclk_div(config.hf_clk.div.to_pac());
-        r.set_pump_sel(config.pump_clk.src.to_pac());
-        r.set_sysclk_div(config.sys_clk.div.to_pac());
-    });
+    pub trait ExtClkPinPin {}
 
-    configure_imo(&config.imo);
+    pub trait PeriClkDiv {
+        type Config;
 
-    if sys_clk_freq < current_sys_clk_freq {
-        set_wait_states(sys_clk_freq);
+        const SEL_TYPE: u8;
+        const SEL_DIV: u8;
     }
-    CLOCKS.sys.store(sys_clk_freq, Ordering::Relaxed);
 
-    let pump_freq = match config.pump_clk.src {
-        PumpClkSrc::Gnd => 0,
-        PumpClkSrc::Imo => imo_freq,
-        PumpClkSrc::HfClk => hf_clk_freq,
-    };
-    CLOCKS.pump.store(pump_freq, Ordering::Relaxed);
+    pub trait PeripheralClock {
+        fn peri_clock_index() -> u8;
+    }
+}
 
-    // TODO: Calculate frequencies
-    for (n, clk_div) in config.peri_clk_div_16.iter().enumerate() {
-        if let Some(config) = clk_div {
-            peri.div_16_ctl(n as usize)
-                .write(|r| r.set_int16_div(config.integer));
-            peri.div_cmd().write(|r| {
-                r.set_sel_type(PeriClkDivType::_16 as u8);
-                r.set_sel_div(n as u8);
-                r.set_enable(true);
-            });
-        } else {
-            peri.div_cmd().write(|r| {
-                r.set_sel_type(PeriClkDivType::_16 as u8);
-                r.set_sel_div(n as u8);
-                r.set_disable(true);
-            });
+pub trait HfClockSource: sealed::HfClockSource {
+    fn set_hf_clock_divider(&mut self, div: HfClkDiv) {
+        let sys_clk_div = SysClkDiv::from_pac(pac::SRSSLT.clk_select().read().sysclk_div());
+        let new_sys_clk_freq = self.frequency() / div.div() / sys_clk_div.div();
+        let current_sys_clk_freq = self.sys_clk_freq();
+
+        if new_sys_clk_freq > current_sys_clk_freq {
+            set_wait_states(new_sys_clk_freq);
+        }
+
+        pac::SRSSLT
+            .clk_select()
+            .modify(|r| r.set_hfclk_div(div.to_pac()));
+
+        if new_sys_clk_freq < current_sys_clk_freq {
+            set_wait_states(new_sys_clk_freq);
         }
     }
-    for (n, clk_div) in config.peri_clk_div_16_5.iter().enumerate() {
-        if let Some(config) = clk_div {
-            peri.div_16_5_ctl(n as usize).write(|r| {
+
+    fn set_sys_clock_divider(&self, div: SysClkDiv) {
+        let new_sys_clk_freq = self.hf_clk_freq() / div.div();
+        let current_sys_clk_freq = self.sys_clk_freq();
+
+        if new_sys_clk_freq > current_sys_clk_freq {
+            set_wait_states(new_sys_clk_freq);
+        }
+
+        pac::SRSSLT
+            .clk_select()
+            .modify(|r| r.set_sysclk_div(div.to_pac()));
+
+        if new_sys_clk_freq < current_sys_clk_freq {
+            set_wait_states(new_sys_clk_freq);
+        }
+    }
+
+    fn hf_clk_freq(&self) -> u32 {
+        let hf_clk_div = HfClkDiv::from_pac(pac::SRSSLT.clk_select().read().hfclk_div());
+        self.frequency() / hf_clk_div.div()
+    }
+
+    fn sys_clk_freq(&self) -> u32 {
+        let sys_clk_div = SysClkDiv::from_pac(pac::SRSSLT.clk_select().read().sysclk_div());
+        self.hf_clk_freq() / sys_clk_div.div()
+    }
+
+    // TODO: set pump clock source
+    fn pump_clk_freq(&self) -> u32 {
+        let src = PumpClkSrc::from_pac(pac::SRSSLT.clk_select().read().pump_sel());
+        match src {
+            PumpClkSrc::Gnd => 0,
+            PumpClkSrc::Imo => self.frequency(),
+            PumpClkSrc::HfClk => self.hf_clk_freq(),
+        }
+    }
+
+    // TODO: move to trait only implemented for the correct values of N
+    fn peripheral_divider_16_bit<'a, const N: u8>(&'a self) -> PeriClkDiv16<'a, N> {
+        PeriClkDiv16 {
+            hf_clk_freq: self.hf_clk_freq(),
+            _phantom: PhantomData,
+        }
+    }
+
+    // TODO: move to trait only implemented for the correct values of N
+    fn peripheral_divider_16_5_bit<'a, const N: u8>(&'a self) -> PeriClkDiv16_5<'a, N> {
+        PeriClkDiv16_5 {
+            hf_clk_freq: self.hf_clk_freq(),
+            _phantom: PhantomData,
+        }
+    }
+}
+
+pub struct Imo {
+    _private: (),
+}
+
+impl Imo {
+    // safety: This must be called only when it is known that the IMO clock is
+    // the HF clock source.
+    pub(crate) fn new() -> Self {
+        Self { _private: () }
+    }
+
+    #[inline]
+    pub fn set_frequency(&mut self, freq: ImoFreq) {
+        let hf_clk_div = HfClkDiv::from_pac(pac::SRSSLT.clk_select().read().hfclk_div());
+        let sys_clk_div = SysClkDiv::from_pac(pac::SRSSLT.clk_select().read().sysclk_div());
+        let new_sys_clk_freq = freq.hz() / hf_clk_div.div() / sys_clk_div.div();
+        let current_sys_clk_freq = self.sys_clk_freq();
+
+        if new_sys_clk_freq > current_sys_clk_freq {
+            set_wait_states(new_sys_clk_freq);
+        }
+
+        configure_imo(Some(ImoConfig { freq }));
+
+        if new_sys_clk_freq < current_sys_clk_freq {
+            set_wait_states(new_sys_clk_freq);
+        }
+    }
+
+    #[inline]
+    pub fn switch_to_external_clock<'p, T: Pin>(
+        self,
+        freq: u32,
+        pin: ExtClkPin<'p, T>,
+    ) -> ExtClkImo {
+        let hf_clk_div = HfClkDiv::from_pac(pac::SRSSLT.clk_select().read().hfclk_div());
+        let sys_clk_div = SysClkDiv::from_pac(pac::SRSSLT.clk_select().read().sysclk_div());
+        let new_sys_clk_freq = freq / hf_clk_div.div() / sys_clk_div.div();
+        let current_sys_clk_freq = self.sys_clk_freq();
+
+        if new_sys_clk_freq > current_sys_clk_freq {
+            set_wait_states(new_sys_clk_freq);
+        }
+
+        pac::SRSSLT
+            .clk_select()
+            .modify(|r| r.set_hfclk_sel(HfclkSel::EXTCLK));
+
+        if new_sys_clk_freq < current_sys_clk_freq {
+            set_wait_states(new_sys_clk_freq);
+        }
+
+        ExtClkImo {
+            freq,
+            _pin: pin.map_into(),
+        }
+    }
+
+    // TODO: PLL
+}
+
+impl sealed::HfClockSource for Imo {
+    #[inline]
+    fn frequency(&self) -> u32 {
+        // Assumes this can only be called when the IMO is enabled.
+        imo_freq().unwrap().hz()
+    }
+}
+
+impl HfClockSource for Imo {}
+
+pub struct ExtClkImo<'p> {
+    freq: u32,
+    _pin: ExtClkPin<'p, AnyPin>,
+}
+
+impl<'p> ExtClkImo<'p> {
+    #[inline]
+    pub fn set_imo_frequency(&self, freq: ImoFreq) {
+        configure_imo(Some(ImoConfig { freq }));
+    }
+
+    #[inline]
+    pub fn disable_imo(self) -> ExtClk<'p> {
+        configure_imo(None);
+
+        ExtClk {
+            freq: self.freq,
+            _pin: self._pin,
+        }
+    }
+
+    #[inline]
+    // TODO: return pin
+    pub fn switch_to_imo(self) -> Imo {
+        let hf_clk_div = HfClkDiv::from_pac(pac::SRSSLT.clk_select().read().hfclk_div());
+        let sys_clk_div = SysClkDiv::from_pac(pac::SRSSLT.clk_select().read().sysclk_div());
+        let new_sys_clk_freq = imo_freq().unwrap().hz() / hf_clk_div.div() / sys_clk_div.div();
+        let current_sys_clk_freq = self.sys_clk_freq();
+
+        if new_sys_clk_freq > current_sys_clk_freq {
+            set_wait_states(new_sys_clk_freq);
+        }
+
+        pac::SRSSLT
+            .clk_select()
+            .modify(|r| r.set_hfclk_sel(HfclkSel::IMO));
+
+        if new_sys_clk_freq < current_sys_clk_freq {
+            set_wait_states(new_sys_clk_freq);
+        }
+
+        Imo::new()
+    }
+}
+
+impl<'p> sealed::HfClockSource for ExtClkImo<'p> {
+    #[inline]
+    fn frequency(&self) -> u32 {
+        self.freq
+    }
+}
+
+impl<'p> HfClockSource for ExtClkImo<'p> {}
+
+pub struct ExtClk<'p> {
+    freq: u32,
+    _pin: ExtClkPin<'p, AnyPin>,
+}
+
+impl<'p> ExtClk<'p> {
+    #[inline]
+    pub fn enable_imo(self, freq: ImoFreq) -> ExtClkImo<'p> {
+        configure_imo(Some(ImoConfig { freq }));
+
+        ExtClkImo {
+            freq: self.freq,
+            _pin: self._pin,
+        }
+    }
+}
+
+impl<'p> sealed::HfClockSource for ExtClk<'p> {
+    #[inline]
+    fn frequency(&self) -> u32 {
+        self.freq
+    }
+}
+
+impl<'p> HfClockSource for ExtClk<'p> {}
+
+pub trait ExtClkPinPin: sealed::ExtClkPinPin + Pin {}
+
+impl ExtClkPinPin for peripherals::PIN_0_6 {}
+impl sealed::ExtClkPinPin for peripherals::PIN_0_6 {}
+
+pub struct ExtClkPin<'d, T: Pin> {
+    pin: PeripheralRef<'d, AnyPin>,
+    _phantom: PhantomData<T>,
+}
+
+impl<'d, T: Pin> ExtClkPin<'d, T> {
+    pub fn new<P: ExtClkPinPin>(pin: impl Peripheral<P = P> + 'd) -> ExtClkPin<'d, P> {
+        into_ref!(pin);
+
+        pin.hsiom()
+            .port_sel()
+            .modify(|r| r.set_io_sel(pin.pin() as usize, IoSel::ACT_0));
+        pin.prt()
+            .pc()
+            .modify(|r| r.set_dm(pin.pin() as usize, Dm::INPUT));
+
+        ExtClkPin {
+            pin: pin.map_into(),
+            _phantom: PhantomData,
+        }
+    }
+
+    fn map_into(self) -> ExtClkPin<'d, AnyPin> {
+        unsafe { core::mem::transmute(self) }
+    }
+}
+
+impl<'d, T: Pin> Drop for ExtClkPin<'d, T> {
+    fn drop(&mut self) {
+        self.pin
+            .prt()
+            .pc()
+            .modify(|r| r.set_dm(self.pin.pin() as usize, Dm::OFF));
+        self.pin
+            .hsiom()
+            .port_sel()
+            .modify(|r| r.set_io_sel(self.pin.pin() as usize, IoSel::GPIO));
+    }
+}
+
+use sealed::PeriClkDiv as _;
+pub trait PeriClkDiv: sealed::PeriClkDiv {
+    fn frequency(&self) -> u32;
+}
+
+impl<T: sealed::PeriClkDiv> sealed::PeriClkDiv for &T {
+    type Config = T::Config;
+
+    const SEL_TYPE: u8 = T::SEL_TYPE;
+    const SEL_DIV: u8 = T::SEL_DIV;
+}
+
+impl<T: sealed::PeriClkDiv> sealed::PeriClkDiv for &mut T {
+    type Config = T::Config;
+
+    const SEL_TYPE: u8 = T::SEL_TYPE;
+    const SEL_DIV: u8 = T::SEL_DIV;
+}
+
+impl<T: PeriClkDiv + sealed::PeriClkDiv> PeriClkDiv for &T {
+    fn frequency(&self) -> u32 {
+        T::frequency(self)
+    }
+}
+
+impl<T: PeriClkDiv + sealed::PeriClkDiv> PeriClkDiv for &mut T {
+    fn frequency(&self) -> u32 {
+        T::frequency(self)
+    }
+}
+
+pub trait PeriClkDivExt: PeriClkDiv {
+    fn configure(&mut self, config: Option<Self::Config>);
+}
+
+impl<T: PeriClkDivExt + PeriClkDiv + sealed::PeriClkDiv> PeriClkDivExt for &mut T {
+    fn configure(&mut self, config: Option<Self::Config>) {
+        T::configure(self, config)
+    }
+}
+
+pub struct PeriClkDiv16<'a, const N: u8> {
+    hf_clk_freq: u32,
+    _phantom: PhantomData<&'a mut ()>,
+}
+
+impl<'a, const N: u8> sealed::PeriClkDiv for PeriClkDiv16<'a, N> {
+    type Config = PeriClkDiv16Config;
+
+    const SEL_TYPE: u8 = 1;
+    const SEL_DIV: u8 = N;
+}
+
+impl<'a, const N: u8> PeriClkDiv for PeriClkDiv16<'a, N> {
+    #[inline]
+    fn frequency(&self) -> u32 {
+        let r = pac::PERI.div_16_ctl(Self::SEL_DIV as usize).read();
+        if r.en() {
+            self.hf_clk_freq / (r.int16_div() as u32 + 1)
+        } else {
+            0
+        }
+    }
+}
+
+impl<'a, const N: u8> PeriClkDivExt for PeriClkDiv16<'a, N> {
+    #[inline]
+    fn configure(&mut self, config: Option<Self::Config>) {
+        if let Some(config) = config {
+            pac::PERI
+                .div_16_ctl(Self::SEL_DIV as usize)
+                .write(|r| r.set_int16_div(config.integer));
+            pac::PERI.div_cmd().write(|r| {
+                r.set_sel_type(Self::SEL_TYPE);
+                r.set_sel_div(Self::SEL_DIV);
+                r.set_enable(true);
+                // Defaults
+                r.set_pa_sel_type(3);
+                r.set_pa_sel_div(63);
+            });
+            while pac::PERI.div_cmd().read().enable() {}
+        } else {
+            pac::PERI.div_cmd().write(|r| {
+                r.set_sel_type(Self::SEL_TYPE);
+                r.set_sel_div(Self::SEL_DIV);
+                r.set_disable(true);
+                // Defaults
+                r.set_pa_sel_type(3);
+                r.set_pa_sel_div(63);
+            });
+            while pac::PERI.div_cmd().read().disable() {}
+        }
+    }
+}
+
+pub struct PeriClkDiv16_5<'a, const N: u8> {
+    hf_clk_freq: u32,
+    _phantom: PhantomData<&'a mut ()>,
+}
+
+impl<'a, const N: u8> sealed::PeriClkDiv for PeriClkDiv16_5<'a, N> {
+    type Config = PeriClkDiv16_5Config;
+
+    const SEL_TYPE: u8 = 2;
+    const SEL_DIV: u8 = N;
+}
+
+impl<'a, const N: u8> PeriClkDiv for PeriClkDiv16_5<'a, N> {
+    #[inline]
+    fn frequency(&self) -> u32 {
+        let r = pac::PERI.div_16_5_ctl(Self::SEL_DIV as usize).read();
+        if r.en() {
+            (self.hf_clk_freq << 5) / (((r.int16_div() as u32 + 1) << 5) + r.frac5_div() as u32)
+        } else {
+            0
+        }
+    }
+}
+
+impl<'a, const N: u8> PeriClkDivExt for PeriClkDiv16_5<'a, N> {
+    #[inline]
+    fn configure(&mut self, config: Option<Self::Config>) {
+        if let Some(config) = config {
+            pac::PERI.div_16_5_ctl(Self::SEL_DIV as usize).write(|r| {
                 r.set_int16_div(config.integer);
                 r.set_frac5_div(config.frac);
             });
-            peri.div_cmd().write(|r| {
-                r.set_sel_type(PeriClkDivType::_16_5 as u8);
-                r.set_sel_div(n as u8);
+            pac::PERI.div_cmd().write(|r| {
+                r.set_sel_type(Self::SEL_TYPE);
+                r.set_sel_div(Self::SEL_DIV);
                 r.set_enable(true);
+                // Defaults
+                r.set_pa_sel_type(3);
+                r.set_pa_sel_div(63);
             });
+            while pac::PERI.div_cmd().read().enable() {}
         } else {
-            peri.div_cmd().write(|r| {
-                r.set_sel_type(PeriClkDivType::_16_5 as u8);
-                r.set_sel_div(n as u8);
+            pac::PERI.div_cmd().write(|r| {
+                r.set_sel_type(Self::SEL_TYPE);
+                r.set_sel_div(Self::SEL_DIV);
                 r.set_disable(true);
+                // Defaults
+                r.set_pa_sel_type(3);
+                r.set_pa_sel_div(63);
             });
+            while pac::PERI.div_cmd().read().enable() {}
         }
     }
-
-    // TODO: Calculate frequencies
-    configure_peripheral_clock(PeriClk::Scb0, config.scb0_clk);
-    configure_peripheral_clock(PeriClk::Scb1, config.scb1_clk);
-    configure_peripheral_clock(PeriClk::Scb2, config.scb2_clk);
-    configure_peripheral_clock(PeriClk::Csd, config.csd_clk);
-    configure_peripheral_clock(PeriClk::Tcpwm0, config.tcpwm0_clk);
-    configure_peripheral_clock(PeriClk::Tcpwm1, config.tcpwm1_clk);
-    configure_peripheral_clock(PeriClk::Tcpwm2, config.tcpwm2_clk);
-    configure_peripheral_clock(PeriClk::Tcpwm3, config.tcpwm3_clk);
-    configure_peripheral_clock(PeriClk::Tcpwm4, config.tcpwm4_clk);
-    configure_peripheral_clock(PeriClk::Prgio2, config.prgio2_clk);
-    configure_peripheral_clock(PeriClk::Prgio3, config.prgio3_clk);
-    configure_peripheral_clock(PeriClk::Lcd, config.lcd_clk);
-    // TODO: fractional divider not supported for SAR
-    configure_peripheral_clock(PeriClk::Pass0Sar, config.pass0_sar_clk);
 }
 
-#[inline(always)]
-fn configure_imo(config: &Option<ImoConfig>) {
+pub trait PeripheralClock: sealed::PeripheralClock {
+    #[inline]
+    fn set_clock_divider<T: PeriClkDiv>(clk_div: Option<&T>) {
+        let (sel_type, sel_div) = clk_div
+            .map(|_| (T::SEL_TYPE, T::SEL_DIV))
+            .unwrap_or((3, 63));
+        crate::pac::PERI
+            .pclk_ctl(Self::peri_clock_index() as usize)
+            .write(|r| {
+                r.set_sel_type(sel_type);
+                r.set_sel_div(sel_div);
+            });
+    }
+}
+
+macro_rules! impl_peri_clk {
+    ($name:ident, $index:expr) => {
+        impl PeripheralClock for peripherals::$name {}
+        impl sealed::PeripheralClock for peripherals::$name {
+            #[inline]
+            fn peri_clock_index() -> u8 {
+                $index as u8
+            }
+        }
+    };
+}
+
+impl_peri_clk!(SCB0, 0);
+impl_peri_clk!(SCB1, 1);
+impl_peri_clk!(SCB2, 2);
+// impl_peri_clk!(CSD, 3);
+impl_peri_clk!(TCPWM0, 4);
+impl_peri_clk!(TCPWM1, 5);
+impl_peri_clk!(TCPWM2, 6);
+impl_peri_clk!(TCPWM3, 7);
+impl_peri_clk!(TCPWM4, 8);
+impl_peri_clk!(PRGIO2, 9);
+impl_peri_clk!(PRGIO3, 10);
+impl_peri_clk!(LCD, 11);
+// impl_peri_clk!(PASS0SAR, 12);
+
+fn configure_imo(config: Option<ImoConfig>) {
     // TODO: if current frequency is desired frequency, return early
     let desired_freq = config.as_ref().map(|c| c.freq.hz()).unwrap_or(0);
     let current_freq = imo_freq().map(|c| c.hz()).unwrap_or(0);
@@ -446,7 +700,7 @@ fn configure_imo(config: &Option<ImoConfig>) {
             // load it into CLK_IMO_TRIM1.
             srsslt.clk_imo_trim1().write(|r| r.0 = course_trim as u32);
             // Clear CLK_IMO_TRIM2.
-            srsslt.clk_imo_trim2().write(|_| {});
+            srsslt.clk_imo_trim2().write_value(Default::default());
             // Read the temperature compensation value for a desired frequency from
             // SFLASH and load it into CLK_IMO_TRIM3.
             srsslt.clk_imo_trim3().write(|r| r.0 = temp_comp as u32);
@@ -479,18 +733,7 @@ fn configure_imo(config: &Option<ImoConfig>) {
     })
 }
 
-#[inline(always)]
-fn configure_peripheral_clock(clk: PeriClk, clk_src: Option<(PeriClkDivType, u8)>) {
-    let peri = pac::PERI;
-    let (sel_type, sel_div) = clk_src.map(|(t, n)| (t as u8, n)).unwrap_or((3, 63));
-    peri.pclk_ctl(clk as usize).write(|r| {
-        r.set_sel_type(sel_type);
-        r.set_sel_div(sel_div);
-    })
-}
-
 fn set_wait_states(sys_clk_freq: u32) {
-    let cpuss = pac::CPUSS;
     let wait_states = if sys_clk_freq <= 16_000_000 {
         0
     } else if sys_clk_freq <= 32_000_000 {
@@ -498,7 +741,7 @@ fn set_wait_states(sys_clk_freq: u32) {
     } else {
         3
     };
-    cpuss.flash_ctl().modify(|r| {
+    pac::CPUSS.flash_ctl().modify(|r| {
         r.set_flash_ws(wait_states);
         r.set_pref_en(wait_states != 0);
     })
@@ -527,7 +770,7 @@ pub(crate) fn wait_cycles(cycles: u32) {
     }
 }
 
-pub fn imo_freq() -> Option<ImoFreq> {
+fn imo_freq() -> Option<ImoFreq> {
     if pac::SRSSLT.clk_imo_config().read().enable() {
         Some(ImoFreq::from_pac(
             pac::SRSSLT.clk_imo_select().read().freq(),
@@ -537,17 +780,16 @@ pub fn imo_freq() -> Option<ImoFreq> {
     }
 }
 
-pub fn hf_clk_freq() -> u32 {
-    CLOCKS.hf.load(Ordering::Relaxed)
+// If the WDC clocked by the ILO has been selected for the embassy-time driver,
+// don't allow the user to disable the ILO.
+#[cfg(not(feature = "time-driver-wdc-ilo"))]
+/// Requires WDT to be disabled in order to disable.
+pub fn ilo_enable(enable: bool) {
+    pac::SRSSLT.clk_ilo_config().write(|r| r.set_enable(enable));
 }
 
-pub fn sys_clk_freq() -> u32 {
-    CLOCKS.sys.load(Ordering::Relaxed)
-}
-
-pub fn pump_clk_freq() -> u32 {
-    CLOCKS.pump.load(Ordering::Relaxed)
-}
+// TODO: WCO enable and trimming
+// TODO: select WDC source between ILO and WCO
 
 pub const ILO_AVG_FREQ_HZ: u32 = 40_000;
 pub const ILO_FAST_FREQ_HZ: u32 = 64_000;

@@ -10,7 +10,7 @@ use {defmt_rtt as _, panic_probe as _};
 
 #[embassy_executor::main]
 async fn main(_spawner: Spawner) {
-    let p = psoc4100s_hal::init(Default::default());
+    let (_, p) = psoc4100s_hal::init(Default::default());
     let mut led = Output::new(p.PIN_1_6, Level::Low);
 
     loop {

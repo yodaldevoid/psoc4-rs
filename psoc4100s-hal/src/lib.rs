@@ -6,6 +6,7 @@ pub(crate) mod fmt;
 
 pub mod clocks;
 pub mod gpio;
+pub mod i2c;
 pub mod watchdog;
 #[cfg(any(feature = "time-driver-wdc-ilo", feature = "time-driver-wdc-wco"))]
 pub mod wdc;

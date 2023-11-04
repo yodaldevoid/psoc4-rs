@@ -57,41 +57,32 @@
             <field>
               <name>ID</name>
               <description>Silicon ID</description>
-              <bitRange>[16:0]</bitRange>
+              <bitRange>[15:0]</bitRange>
               <access>read-only</access>
             </field>
           </fields>
         </register>
         <register>
-          <name>HIB_KEY_DELAY</name>
-          <description>Hibernate wakeup value for PWR_KEY_DELAY</description>
+          <name>KEY_DELAY</name>
+          <description>Hibernate and DeepSleep wakeup values for PWR_KEY_DELAY</description>
           <addressOffset>0x150</addressOffset>
           <size>16</size>
           <access>read-only</access>
           <fields>
             <field>
-              <name>WAKEUP_HOLDOFF</name>
+              <name>HIB_WAKEUP_HOLDOFF</name>
               <description>Delay (in 12MHz IMO clock cycles) to wait for references to settle on wakeup from hibernate/
               deepsleep. PBOD is ignored and system does not resume until this delay expires. Note that the
               same delay on POR is hard-coded.</description>
               <bitRange>[9:0]</bitRange>
               <access>read-only</access>
             </field>
-          </fields>
-        </register>
-        <register>
-          <name>DPSLP_KEY_DELAY</name>
-          <description>DeepSleep wakeup value for PWR_KEY_DELAY</description>
-          <addressOffset>0x152</addressOffset>
-          <size>16</size>
-          <access>read-only</access>
-          <fields>
             <field>
-              <name>WAKEUP_HOLDOFF</name>
+              <name>DPSLP_WAKEUP_HOLDOFF</name>
               <description>Delay (in 12MHz IMO clock cycles) to wait for references to settle on wakeup from hibernate/
               deepsleep. PBOD is ignored and system does not resume until this delay expires. Note that the
               same delay on POR is hard-coded.</description>
-              <bitRange>[9:0]</bitRange>
+              <bitRange>[25:16]</bitRange>
               <access>read-only</access>
             </field>
           </fields>
@@ -143,7 +134,7 @@
           </fields>
         </register>
         <register>
-          <name>CSDV2_CSD0_ADC_TRIM1</name>
+          <name>CSDV2_CSD0_ADC_TRIM</name>
           <description>CSDV2 CSD0 ADC TRIM 1</description>
           <addressOffset>0x160</addressOffset>
           <size>8</size>
@@ -155,26 +146,17 @@
               <bitRange>[7:0]</bitRange>
               <access>read-only</access>
             </field>
-          </fields>
-        </register>
-        <register>
-          <name>CSDV2_CSD0_ADC_TRIM2</name>
-          <description>CSDV2 CSD0 ADC TRIM2</description>
-          <addressOffset>0x160</addressOffset>
-          <size>8</size>
-          <access>read-only</access>
-          <fields>
             <field>
               <name>CSD_ADC_CAL_MSB</name>
               <description>High byte of CSDv2 Calibration</description>
-              <bitRange>[7:0]</bitRange>
+              <bitRange>[15:8]</bitRange>
               <access>read-only</access>
             </field>
           </fields>
         </register>
         <register>
-          <name>SAR_TEMP_MULTIPLIER</name>
-          <description>SAR Temperature Sensor Multiplication Factor</description>
+          <name>SAR_TEMP_MULTIPLIER_OFFSET</name>
+          <description>SAR Temperature Sensor Multiplication Factor and Offset</description>
           <addressOffset>0x164</addressOffset>
           <size>16</size>
           <access>read-only</access>
@@ -186,41 +168,420 @@
               <bitRange>[15:0]</bitRange>
               <access>read-only</access>
             </field>
-          </fields>
-        </register>
-        <register>
-          <name>SAR_TEMP_OFFSET</name>
-          <description>SAR Temperature Sensor Offset</description>
-          <addressOffset>0x166</addressOffset>
-          <size>16</size>
-          <access>read-only</access>
-          <fields>
             <field>
               <name>TEMP_OFFSET</name>
               <description>Offset value for SAR temperature sensor in fixed point 10.6 format. Note: this field exists in products that contain SAR (m0s8sar) only.</description>
-              <bitRange>[15:0]</bitRange>
+              <bitRange>[31:16]</bitRange>
               <access>read-only</access>
             </field>
           </fields>
         </register>
         <register>
-          <dim>25</dim>
-          <dimIncrement>1</dimIncrement>
-          <name>IMO_TCTRIM_LT[%s]</name>
+          <name>IMO_TCTRIM_LT0_3</name>
           <description>IMO TempCo Trim Register (SRSS-Lite)</description>
           <addressOffset>0x1CC</addressOffset>
-          <size>8</size>
+          <size>3</size>
           <access>read-only</access>
           <fields>
             <field>
-              <name>STEPSIZE</name>
+              <name>STEPSIZE0</name>
               <description>IMO trim stepsize bits. These bits are determined at manufacturing time to adjust for process
               variation. They are used to tune the stepsize of the FSOFFSET and OFFSET trims.</description>
               <bitRange>[4:0]</bitRange>
               <access>read-only</access>
             </field>
             <field>
-              <name>TCTRIM</name>
+              <name>TCTRIM0</name>
+              <description>IMO temperature compesation trim. These bits are determined at manufacturing time to adjust
+              for temperature dependence. This bits are dependent on frequency and need to be changed using the Cypress provided frequency change algorithm.</description>
+              <bitRange>[6:5]</bitRange>
+              <access>read-only</access>
+            </field>
+            <field>
+              <name>STEPSIZE1</name>
+              <description>IMO trim stepsize bits. These bits are determined at manufacturing time to adjust for process
+              variation. They are used to tune the stepsize of the FSOFFSET and OFFSET trims.</description>
+              <bitRange>[12:8]</bitRange>
+              <access>read-only</access>
+            </field>
+            <field>
+              <name>TCTRIM1</name>
+              <description>IMO temperature compesation trim. These bits are determined at manufacturing time to adjust
+              for temperature dependence. This bits are dependent on frequency and need to be changed using the Cypress provided frequency change algorithm.</description>
+              <bitRange>[14:13]</bitRange>
+              <access>read-only</access>
+            </field>
+            <field>
+              <name>STEPSIZE2</name>
+              <description>IMO trim stepsize bits. These bits are determined at manufacturing time to adjust for process
+              variation. They are used to tune the stepsize of the FSOFFSET and OFFSET trims.</description>
+              <bitRange>[20:16]</bitRange>
+              <access>read-only</access>
+            </field>
+            <field>
+              <name>TCTRIM2</name>
+              <description>IMO temperature compesation trim. These bits are determined at manufacturing time to adjust
+              for temperature dependence. This bits are dependent on frequency and need to be changed using the Cypress provided frequency change algorithm.</description>
+              <bitRange>[22:21]</bitRange>
+              <access>read-only</access>
+            </field>
+            <field>
+              <name>STEPSIZE3</name>
+              <description>IMO trim stepsize bits. These bits are determined at manufacturing time to adjust for process
+              variation. They are used to tune the stepsize of the FSOFFSET and OFFSET trims.</description>
+              <bitRange>[28:24]</bitRange>
+              <access>read-only</access>
+            </field>
+            <field>
+              <name>TCTRIM3</name>
+              <description>IMO temperature compesation trim. These bits are determined at manufacturing time to adjust
+              for temperature dependence. This bits are dependent on frequency and need to be changed using the Cypress provided frequency change algorithm.</description>
+              <bitRange>[30:29]</bitRange>
+              <access>read-only</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>IMO_TCTRIM_LT4_7</name>
+          <description>IMO TempCo Trim Register (SRSS-Lite)</description>
+          <addressOffset>0x1D0</addressOffset>
+          <size>3</size>
+          <access>read-only</access>
+          <fields>
+            <field>
+              <name>STEPSIZE4</name>
+              <description>IMO trim stepsize bits. These bits are determined at manufacturing time to adjust for process
+              variation. They are used to tune the stepsize of the FSOFFSET and OFFSET trims.</description>
+              <bitRange>[4:0]</bitRange>
+              <access>read-only</access>
+            </field>
+            <field>
+              <name>TCTRIM4</name>
+              <description>IMO temperature compesation trim. These bits are determined at manufacturing time to adjust
+              for temperature dependence. This bits are dependent on frequency and need to be changed using the Cypress provided frequency change algorithm.</description>
+              <bitRange>[6:5]</bitRange>
+              <access>read-only</access>
+            </field>
+            <field>
+              <name>STEPSIZE5</name>
+              <description>IMO trim stepsize bits. These bits are determined at manufacturing time to adjust for process
+              variation. They are used to tune the stepsize of the FSOFFSET and OFFSET trims.</description>
+              <bitRange>[12:8]</bitRange>
+              <access>read-only</access>
+            </field>
+            <field>
+              <name>TCTRIM5</name>
+              <description>IMO temperature compesation trim. These bits are determined at manufacturing time to adjust
+              for temperature dependence. This bits are dependent on frequency and need to be changed using the Cypress provided frequency change algorithm.</description>
+              <bitRange>[14:13]</bitRange>
+              <access>read-only</access>
+            </field>
+            <field>
+              <name>STEPSIZE6</name>
+              <description>IMO trim stepsize bits. These bits are determined at manufacturing time to adjust for process
+              variation. They are used to tune the stepsize of the FSOFFSET and OFFSET trims.</description>
+              <bitRange>[20:16]</bitRange>
+              <access>read-only</access>
+            </field>
+            <field>
+              <name>TCTRIM6</name>
+              <description>IMO temperature compesation trim. These bits are determined at manufacturing time to adjust
+              for temperature dependence. This bits are dependent on frequency and need to be changed using the Cypress provided frequency change algorithm.</description>
+              <bitRange>[22:21]</bitRange>
+              <access>read-only</access>
+            </field>
+            <field>
+              <name>STEPSIZE7</name>
+              <description>IMO trim stepsize bits. These bits are determined at manufacturing time to adjust for process
+              variation. They are used to tune the stepsize of the FSOFFSET and OFFSET trims.</description>
+              <bitRange>[28:24]</bitRange>
+              <access>read-only</access>
+            </field>
+            <field>
+              <name>TCTRIM7</name>
+              <description>IMO temperature compesation trim. These bits are determined at manufacturing time to adjust
+              for temperature dependence. This bits are dependent on frequency and need to be changed using the Cypress provided frequency change algorithm.</description>
+              <bitRange>[30:29]</bitRange>
+              <access>read-only</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>IMO_TCTRIM_LT8_11</name>
+          <description>IMO TempCo Trim Register (SRSS-Lite)</description>
+          <addressOffset>0x1D4</addressOffset>
+          <size>3</size>
+          <access>read-only</access>
+          <fields>
+            <field>
+              <name>STEPSIZE8</name>
+              <description>IMO trim stepsize bits. These bits are determined at manufacturing time to adjust for process
+              variation. They are used to tune the stepsize of the FSOFFSET and OFFSET trims.</description>
+              <bitRange>[4:0]</bitRange>
+              <access>read-only</access>
+            </field>
+            <field>
+              <name>TCTRIM8</name>
+              <description>IMO temperature compesation trim. These bits are determined at manufacturing time to adjust
+              for temperature dependence. This bits are dependent on frequency and need to be changed using the Cypress provided frequency change algorithm.</description>
+              <bitRange>[6:5]</bitRange>
+              <access>read-only</access>
+            </field>
+            <field>
+              <name>STEPSIZE9</name>
+              <description>IMO trim stepsize bits. These bits are determined at manufacturing time to adjust for process
+              variation. They are used to tune the stepsize of the FSOFFSET and OFFSET trims.</description>
+              <bitRange>[12:8]</bitRange>
+              <access>read-only</access>
+            </field>
+            <field>
+              <name>TCTRIM9</name>
+              <description>IMO temperature compesation trim. These bits are determined at manufacturing time to adjust
+              for temperature dependence. This bits are dependent on frequency and need to be changed using the Cypress provided frequency change algorithm.</description>
+              <bitRange>[14:13]</bitRange>
+              <access>read-only</access>
+            </field>
+            <field>
+              <name>STEPSIZE10</name>
+              <description>IMO trim stepsize bits. These bits are determined at manufacturing time to adjust for process
+              variation. They are used to tune the stepsize of the FSOFFSET and OFFSET trims.</description>
+              <bitRange>[20:16]</bitRange>
+              <access>read-only</access>
+            </field>
+            <field>
+              <name>TCTRIM10</name>
+              <description>IMO temperature compesation trim. These bits are determined at manufacturing time to adjust
+              for temperature dependence. This bits are dependent on frequency and need to be changed using the Cypress provided frequency change algorithm.</description>
+              <bitRange>[22:21]</bitRange>
+              <access>read-only</access>
+            </field>
+            <field>
+              <name>STEPSIZE11</name>
+              <description>IMO trim stepsize bits. These bits are determined at manufacturing time to adjust for process
+              variation. They are used to tune the stepsize of the FSOFFSET and OFFSET trims.</description>
+              <bitRange>[28:24]</bitRange>
+              <access>read-only</access>
+            </field>
+            <field>
+              <name>TCTRIM11</name>
+              <description>IMO temperature compesation trim. These bits are determined at manufacturing time to adjust
+              for temperature dependence. This bits are dependent on frequency and need to be changed using the Cypress provided frequency change algorithm.</description>
+              <bitRange>[30:29]</bitRange>
+              <access>read-only</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>IMO_TCTRIM_LT12_15</name>
+          <description>IMO TempCo Trim Register (SRSS-Lite)</description>
+          <addressOffset>0x1D8</addressOffset>
+          <size>3</size>
+          <access>read-only</access>
+          <fields>
+            <field>
+              <name>STEPSIZE12</name>
+              <description>IMO trim stepsize bits. These bits are determined at manufacturing time to adjust for process
+              variation. They are used to tune the stepsize of the FSOFFSET and OFFSET trims.</description>
+              <bitRange>[4:0]</bitRange>
+              <access>read-only</access>
+            </field>
+            <field>
+              <name>TCTRIM12</name>
+              <description>IMO temperature compesation trim. These bits are determined at manufacturing time to adjust
+              for temperature dependence. This bits are dependent on frequency and need to be changed using the Cypress provided frequency change algorithm.</description>
+              <bitRange>[6:5]</bitRange>
+              <access>read-only</access>
+            </field>
+            <field>
+              <name>STEPSIZE13</name>
+              <description>IMO trim stepsize bits. These bits are determined at manufacturing time to adjust for process
+              variation. They are used to tune the stepsize of the FSOFFSET and OFFSET trims.</description>
+              <bitRange>[12:8]</bitRange>
+              <access>read-only</access>
+            </field>
+            <field>
+              <name>TCTRIM13</name>
+              <description>IMO temperature compesation trim. These bits are determined at manufacturing time to adjust
+              for temperature dependence. This bits are dependent on frequency and need to be changed using the Cypress provided frequency change algorithm.</description>
+              <bitRange>[14:13]</bitRange>
+              <access>read-only</access>
+            </field>
+            <field>
+              <name>STEPSIZE14</name>
+              <description>IMO trim stepsize bits. These bits are determined at manufacturing time to adjust for process
+              variation. They are used to tune the stepsize of the FSOFFSET and OFFSET trims.</description>
+              <bitRange>[20:16]</bitRange>
+              <access>read-only</access>
+            </field>
+            <field>
+              <name>TCTRIM14</name>
+              <description>IMO temperature compesation trim. These bits are determined at manufacturing time to adjust
+              for temperature dependence. This bits are dependent on frequency and need to be changed using the Cypress provided frequency change algorithm.</description>
+              <bitRange>[22:21]</bitRange>
+              <access>read-only</access>
+            </field>
+            <field>
+              <name>STEPSIZE15</name>
+              <description>IMO trim stepsize bits. These bits are determined at manufacturing time to adjust for process
+              variation. They are used to tune the stepsize of the FSOFFSET and OFFSET trims.</description>
+              <bitRange>[28:24]</bitRange>
+              <access>read-only</access>
+            </field>
+            <field>
+              <name>TCTRIM15</name>
+              <description>IMO temperature compesation trim. These bits are determined at manufacturing time to adjust
+              for temperature dependence. This bits are dependent on frequency and need to be changed using the Cypress provided frequency change algorithm.</description>
+              <bitRange>[30:29]</bitRange>
+              <access>read-only</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>IMO_TCTRIM_LT16_19</name>
+          <description>IMO TempCo Trim Register (SRSS-Lite)</description>
+          <addressOffset>0x1DC</addressOffset>
+          <size>3</size>
+          <access>read-only</access>
+          <fields>
+            <field>
+              <name>STEPSIZE16</name>
+              <description>IMO trim stepsize bits. These bits are determined at manufacturing time to adjust for process
+              variation. They are used to tune the stepsize of the FSOFFSET and OFFSET trims.</description>
+              <bitRange>[4:0]</bitRange>
+              <access>read-only</access>
+            </field>
+            <field>
+              <name>TCTRIM16</name>
+              <description>IMO temperature compesation trim. These bits are determined at manufacturing time to adjust
+              for temperature dependence. This bits are dependent on frequency and need to be changed using the Cypress provided frequency change algorithm.</description>
+              <bitRange>[6:5]</bitRange>
+              <access>read-only</access>
+            </field>
+            <field>
+              <name>STEPSIZE17</name>
+              <description>IMO trim stepsize bits. These bits are determined at manufacturing time to adjust for process
+              variation. They are used to tune the stepsize of the FSOFFSET and OFFSET trims.</description>
+              <bitRange>[12:8]</bitRange>
+              <access>read-only</access>
+            </field>
+            <field>
+              <name>TCTRIM17</name>
+              <description>IMO temperature compesation trim. These bits are determined at manufacturing time to adjust
+              for temperature dependence. This bits are dependent on frequency and need to be changed using the Cypress provided frequency change algorithm.</description>
+              <bitRange>[14:13]</bitRange>
+              <access>read-only</access>
+            </field>
+            <field>
+              <name>STEPSIZE18</name>
+              <description>IMO trim stepsize bits. These bits are determined at manufacturing time to adjust for process
+              variation. They are used to tune the stepsize of the FSOFFSET and OFFSET trims.</description>
+              <bitRange>[20:16]</bitRange>
+              <access>read-only</access>
+            </field>
+            <field>
+              <name>TCTRIM18</name>
+              <description>IMO temperature compesation trim. These bits are determined at manufacturing time to adjust
+              for temperature dependence. This bits are dependent on frequency and need to be changed using the Cypress provided frequency change algorithm.</description>
+              <bitRange>[22:21]</bitRange>
+              <access>read-only</access>
+            </field>
+            <field>
+              <name>STEPSIZE19</name>
+              <description>IMO trim stepsize bits. These bits are determined at manufacturing time to adjust for process
+              variation. They are used to tune the stepsize of the FSOFFSET and OFFSET trims.</description>
+              <bitRange>[28:24]</bitRange>
+              <access>read-only</access>
+            </field>
+            <field>
+              <name>TCTRIM19</name>
+              <description>IMO temperature compesation trim. These bits are determined at manufacturing time to adjust
+              for temperature dependence. This bits are dependent on frequency and need to be changed using the Cypress provided frequency change algorithm.</description>
+              <bitRange>[30:29]</bitRange>
+              <access>read-only</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>IMO_TCTRIM_LT20_23</name>
+          <description>IMO TempCo Trim Register (SRSS-Lite)</description>
+          <addressOffset>0x1E0</addressOffset>
+          <size>3</size>
+          <access>read-only</access>
+          <fields>
+            <field>
+              <name>STEPSIZE20</name>
+              <description>IMO trim stepsize bits. These bits are determined at manufacturing time to adjust for process
+              variation. They are used to tune the stepsize of the FSOFFSET and OFFSET trims.</description>
+              <bitRange>[4:0]</bitRange>
+              <access>read-only</access>
+            </field>
+            <field>
+              <name>TCTRIM20</name>
+              <description>IMO temperature compesation trim. These bits are determined at manufacturing time to adjust
+              for temperature dependence. This bits are dependent on frequency and need to be changed using the Cypress provided frequency change algorithm.</description>
+              <bitRange>[6:5]</bitRange>
+              <access>read-only</access>
+            </field>
+            <field>
+              <name>STEPSIZE21</name>
+              <description>IMO trim stepsize bits. These bits are determined at manufacturing time to adjust for process
+              variation. They are used to tune the stepsize of the FSOFFSET and OFFSET trims.</description>
+              <bitRange>[12:8]</bitRange>
+              <access>read-only</access>
+            </field>
+            <field>
+              <name>TCTRIM21</name>
+              <description>IMO temperature compesation trim. These bits are determined at manufacturing time to adjust
+              for temperature dependence. This bits are dependent on frequency and need to be changed using the Cypress provided frequency change algorithm.</description>
+              <bitRange>[14:13]</bitRange>
+              <access>read-only</access>
+            </field>
+            <field>
+              <name>STEPSIZE22</name>
+              <description>IMO trim stepsize bits. These bits are determined at manufacturing time to adjust for process
+              variation. They are used to tune the stepsize of the FSOFFSET and OFFSET trims.</description>
+              <bitRange>[20:16]</bitRange>
+              <access>read-only</access>
+            </field>
+            <field>
+              <name>TCTRIM22</name>
+              <description>IMO temperature compesation trim. These bits are determined at manufacturing time to adjust
+              for temperature dependence. This bits are dependent on frequency and need to be changed using the Cypress provided frequency change algorithm.</description>
+              <bitRange>[22:21]</bitRange>
+              <access>read-only</access>
+            </field>
+            <field>
+              <name>STEPSIZE23</name>
+              <description>IMO trim stepsize bits. These bits are determined at manufacturing time to adjust for process
+              variation. They are used to tune the stepsize of the FSOFFSET and OFFSET trims.</description>
+              <bitRange>[28:24]</bitRange>
+              <access>read-only</access>
+            </field>
+            <field>
+              <name>TCTRIM23</name>
+              <description>IMO temperature compesation trim. These bits are determined at manufacturing time to adjust
+              for temperature dependence. This bits are dependent on frequency and need to be changed using the Cypress provided frequency change algorithm.</description>
+              <bitRange>[30:29]</bitRange>
+              <access>read-only</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>IMO_TCTRIM_LT24</name>
+          <description>IMO TempCo Trim Register (SRSS-Lite)</description>
+          <addressOffset>0x1E4</addressOffset>
+          <size>3</size>
+          <access>read-only</access>
+          <fields>
+            <field>
+              <name>STEPSIZE24</name>
+              <description>IMO trim stepsize bits. These bits are determined at manufacturing time to adjust for process
+              variation. They are used to tune the stepsize of the FSOFFSET and OFFSET trims.</description>
+              <bitRange>[4:0]</bitRange>
+              <access>read-only</access>
+            </field>
+            <field>
+              <name>TCTRIM24</name>
               <description>IMO temperature compesation trim. These bits are determined at manufacturing time to adjust
               for temperature dependence. This bits are dependent on frequency and need to be changed using the Cypress provided frequency change algorithm.</description>
               <bitRange>[6:5]</bitRange>
@@ -229,19 +590,239 @@
           </fields>
         </register>
         <register>
-          <dim>25</dim>
-          <dimIncrement>1</dimIncrement>
-          <name>IMO_TRIM_LT[%s]</name>
+          <name>IMO_TRIM_LT0_2</name>
           <description>IMO Frequency Trim Register (SRSS-Lite)</description>
-          <addressOffset>0x1E5</addressOffset>
+          <addressOffset>0x1E4</addressOffset>
           <size>8</size>
           <access>read-only</access>
           <fields>
             <field>
-              <name>OFFSET</name>
+              <name>OFFSET0</name>
+              <description>Frequency trim bits. These bits are determined at manufacturing time for each FREQ setting
+              (IMO_TRIM2) and stored in SFLASH.</description>
+              <bitRange>[15:8]</bitRange>
+              <access>read-only</access>
+            </field>
+            <field>
+              <name>OFFSET1</name>
+              <description>Frequency trim bits. These bits are determined at manufacturing time for each FREQ setting
+              (IMO_TRIM2) and stored in SFLASH.</description>
+              <bitRange>[23:16]</bitRange>
+              <access>read-only</access>
+            </field>
+            <field>
+              <name>OFFSET2</name>
+              <description>Frequency trim bits. These bits are determined at manufacturing time for each FREQ setting
+              (IMO_TRIM2) and stored in SFLASH.</description>
+              <bitRange>[31:24]</bitRange>
+              <access>read-only</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>IMO_TRIM_LT3_6</name>
+          <description>IMO Frequency Trim Register (SRSS-Lite)</description>
+          <addressOffset>0x1E8</addressOffset>
+          <size>8</size>
+          <access>read-only</access>
+          <fields>
+            <field>
+              <name>OFFSET3</name>
               <description>Frequency trim bits. These bits are determined at manufacturing time for each FREQ setting
               (IMO_TRIM2) and stored in SFLASH.</description>
               <bitRange>[7:0]</bitRange>
+              <access>read-only</access>
+            </field>
+            <field>
+              <name>OFFSET4</name>
+              <description>Frequency trim bits. These bits are determined at manufacturing time for each FREQ setting
+              (IMO_TRIM2) and stored in SFLASH.</description>
+              <bitRange>[15:8]</bitRange>
+              <access>read-only</access>
+            </field>
+            <field>
+              <name>OFFSET5</name>
+              <description>Frequency trim bits. These bits are determined at manufacturing time for each FREQ setting
+              (IMO_TRIM2) and stored in SFLASH.</description>
+              <bitRange>[23:16]</bitRange>
+              <access>read-only</access>
+            </field>
+            <field>
+              <name>OFFSET6</name>
+              <description>Frequency trim bits. These bits are determined at manufacturing time for each FREQ setting
+              (IMO_TRIM2) and stored in SFLASH.</description>
+              <bitRange>[31:24]</bitRange>
+              <access>read-only</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>IMO_TRIM_LT7_10</name>
+          <description>IMO Frequency Trim Register (SRSS-Lite)</description>
+          <addressOffset>0x1EC</addressOffset>
+          <size>8</size>
+          <access>read-only</access>
+          <fields>
+            <field>
+              <name>OFFSET7</name>
+              <description>Frequency trim bits. These bits are determined at manufacturing time for each FREQ setting
+              (IMO_TRIM2) and stored in SFLASH.</description>
+              <bitRange>[7:0]</bitRange>
+              <access>read-only</access>
+            </field>
+            <field>
+              <name>OFFSET8</name>
+              <description>Frequency trim bits. These bits are determined at manufacturing time for each FREQ setting
+              (IMO_TRIM2) and stored in SFLASH.</description>
+              <bitRange>[15:8]</bitRange>
+              <access>read-only</access>
+            </field>
+            <field>
+              <name>OFFSET9</name>
+              <description>Frequency trim bits. These bits are determined at manufacturing time for each FREQ setting
+              (IMO_TRIM2) and stored in SFLASH.</description>
+              <bitRange>[23:16]</bitRange>
+              <access>read-only</access>
+            </field>
+            <field>
+              <name>OFFSET10</name>
+              <description>Frequency trim bits. These bits are determined at manufacturing time for each FREQ setting
+              (IMO_TRIM2) and stored in SFLASH.</description>
+              <bitRange>[31:24]</bitRange>
+              <access>read-only</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>IMO_TRIM_LT11_14</name>
+          <description>IMO Frequency Trim Register (SRSS-Lite)</description>
+          <addressOffset>0x1F0</addressOffset>
+          <size>8</size>
+          <access>read-only</access>
+          <fields>
+            <field>
+              <name>OFFSET11</name>
+              <description>Frequency trim bits. These bits are determined at manufacturing time for each FREQ setting
+              (IMO_TRIM2) and stored in SFLASH.</description>
+              <bitRange>[7:0]</bitRange>
+              <access>read-only</access>
+            </field>
+            <field>
+              <name>OFFSET12</name>
+              <description>Frequency trim bits. These bits are determined at manufacturing time for each FREQ setting
+              (IMO_TRIM2) and stored in SFLASH.</description>
+              <bitRange>[15:8]</bitRange>
+              <access>read-only</access>
+            </field>
+            <field>
+              <name>OFFSET13</name>
+              <description>Frequency trim bits. These bits are determined at manufacturing time for each FREQ setting
+              (IMO_TRIM2) and stored in SFLASH.</description>
+              <bitRange>[23:16]</bitRange>
+              <access>read-only</access>
+            </field>
+            <field>
+              <name>OFFSET14</name>
+              <description>Frequency trim bits. These bits are determined at manufacturing time for each FREQ setting
+              (IMO_TRIM2) and stored in SFLASH.</description>
+              <bitRange>[31:24]</bitRange>
+              <access>read-only</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>IMO_TRIM_LT15_18</name>
+          <description>IMO Frequency Trim Register (SRSS-Lite)</description>
+          <addressOffset>0x1F4</addressOffset>
+          <size>8</size>
+          <access>read-only</access>
+          <fields>
+            <field>
+              <name>OFFSET15</name>
+              <description>Frequency trim bits. These bits are determined at manufacturing time for each FREQ setting
+              (IMO_TRIM2) and stored in SFLASH.</description>
+              <bitRange>[7:0]</bitRange>
+              <access>read-only</access>
+            </field>
+            <field>
+              <name>OFFSET16</name>
+              <description>Frequency trim bits. These bits are determined at manufacturing time for each FREQ setting
+              (IMO_TRIM2) and stored in SFLASH.</description>
+              <bitRange>[15:8]</bitRange>
+              <access>read-only</access>
+            </field>
+            <field>
+              <name>OFFSET17</name>
+              <description>Frequency trim bits. These bits are determined at manufacturing time for each FREQ setting
+              (IMO_TRIM2) and stored in SFLASH.</description>
+              <bitRange>[23:16]</bitRange>
+              <access>read-only</access>
+            </field>
+            <field>
+              <name>OFFSET18</name>
+              <description>Frequency trim bits. These bits are determined at manufacturing time for each FREQ setting
+              (IMO_TRIM2) and stored in SFLASH.</description>
+              <bitRange>[31:24]</bitRange>
+              <access>read-only</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>IMO_TRIM_LT19_22</name>
+          <description>IMO Frequency Trim Register (SRSS-Lite)</description>
+          <addressOffset>0x1F8</addressOffset>
+          <size>8</size>
+          <access>read-only</access>
+          <fields>
+            <field>
+              <name>OFFSET19</name>
+              <description>Frequency trim bits. These bits are determined at manufacturing time for each FREQ setting
+              (IMO_TRIM2) and stored in SFLASH.</description>
+              <bitRange>[7:0]</bitRange>
+              <access>read-only</access>
+            </field>
+            <field>
+              <name>OFFSET20</name>
+              <description>Frequency trim bits. These bits are determined at manufacturing time for each FREQ setting
+              (IMO_TRIM2) and stored in SFLASH.</description>
+              <bitRange>[15:8]</bitRange>
+              <access>read-only</access>
+            </field>
+            <field>
+              <name>OFFSET21</name>
+              <description>Frequency trim bits. These bits are determined at manufacturing time for each FREQ setting
+              (IMO_TRIM2) and stored in SFLASH.</description>
+              <bitRange>[23:16]</bitRange>
+              <access>read-only</access>
+            </field>
+            <field>
+              <name>OFFSET22</name>
+              <description>Frequency trim bits. These bits are determined at manufacturing time for each FREQ setting
+              (IMO_TRIM2) and stored in SFLASH.</description>
+              <bitRange>[31:24]</bitRange>
+              <access>read-only</access>
+            </field>
+          </fields>
+        </register>
+        <register>
+          <name>IMO_TRIM_LT23_24</name>
+          <description>IMO Frequency Trim Register (SRSS-Lite)</description>
+          <addressOffset>0x1FC</addressOffset>
+          <size>8</size>
+          <access>read-only</access>
+          <fields>
+            <field>
+              <name>OFFSET23</name>
+              <description>Frequency trim bits. These bits are determined at manufacturing time for each FREQ setting
+              (IMO_TRIM2) and stored in SFLASH.</description>
+              <bitRange>[7:0]</bitRange>
+              <access>read-only</access>
+            </field>
+            <field>
+              <name>OFFSET24</name>
+              <description>Frequency trim bits. These bits are determined at manufacturing time for each FREQ setting
+              (IMO_TRIM2) and stored in SFLASH.</description>
+              <bitRange>[15:8]</bitRange>
               <access>read-only</access>
             </field>
           </fields>

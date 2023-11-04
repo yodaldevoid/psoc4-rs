@@ -48,7 +48,7 @@ impl ImoFreq {
     }
 
     #[inline(always)]
-    const fn index(&self) -> usize {
+    const fn index(&self) -> u8 {
         match self {
             Self::_24_MHz => 0,
             Self::_28_MHz => 4,
@@ -691,10 +691,9 @@ fn configure_imo(config: Option<ImoConfig>) {
             // Change the IMO frequency to 24 MHz.
             srsslt.clk_imo_select().write(|r| r.set_freq(Freq::_24_MHZ));
 
-            let sflash = pac::SFLASH;
             let freq_index = config.freq.index();
-            let course_trim = sflash.imo_trim_lt(freq_index).read().0;
-            let temp_comp = sflash.imo_tctrim_lt(freq_index).read().0;
+            let course_trim = imo_trim_lt(freq_index);
+            let temp_comp = imo_tctrim_lt(freq_index);
 
             // Read the course trim value for a desired frequency from SFLASH and
             // load it into CLK_IMO_TRIM1.
@@ -731,6 +730,37 @@ fn configure_imo(config: Option<ImoConfig>) {
             srsslt.clk_imo_config().write(|r| r.set_enable(false));
         }
     })
+}
+
+#[inline(always)]
+fn imo_trim_lt(index: u8) -> u8 {
+    assert!(index < 25);
+    match index / 4 {
+        0 => (pac::SFLASH.imo_tctrim_lt0_3().read().0 >> (index % 4)) as u8,
+        1 => (pac::SFLASH.imo_tctrim_lt4_7().read().0 >> (index % 4)) as u8,
+        2 => (pac::SFLASH.imo_tctrim_lt8_11().read().0 >> (index % 4)) as u8,
+        3 => (pac::SFLASH.imo_tctrim_lt12_15().read().0 >> (index % 4)) as u8,
+        4 => (pac::SFLASH.imo_tctrim_lt16_19().read().0 >> (index % 4)) as u8,
+        5 => (pac::SFLASH.imo_tctrim_lt20_23().read().0 >> (index % 4)) as u8,
+        6 => (pac::SFLASH.imo_tctrim_lt24().read().0 >> (index % 4)) as u8,
+        _ => unreachable!(),
+    }
+}
+
+#[inline(always)]
+fn imo_tctrim_lt(index: u8) -> u8 {
+    assert!(index < 25);
+    let index = index + 1;
+    match index / 4 {
+        0 => (pac::SFLASH.imo_trim_lt0_2().read().0 >> (index % 4)) as u8,
+        1 => (pac::SFLASH.imo_trim_lt3_6().read().0 >> (index % 4)) as u8,
+        2 => (pac::SFLASH.imo_trim_lt7_10().read().0 >> (index % 4)) as u8,
+        3 => (pac::SFLASH.imo_trim_lt11_14().read().0 >> (index % 4)) as u8,
+        4 => (pac::SFLASH.imo_trim_lt15_18().read().0 >> (index % 4)) as u8,
+        5 => (pac::SFLASH.imo_trim_lt19_22().read().0 >> (index % 4)) as u8,
+        6 => (pac::SFLASH.imo_trim_lt23_24().read().0 >> (index % 4)) as u8,
+        _ => unreachable!(),
+    }
 }
 
 fn set_wait_states(sys_clk_freq: u32) {

@@ -5,6 +5,25 @@ edition.workspace = true
 license.workspace = true
 repository.workspace = true
 
+[[bin]]
+name = "i2c_async"
+required-features = ["nightly", "unstable-traits"]
+
+[[bin]]
+name = "i2c_blocking"
+required-features = ["nightly"]
+
+[features]
+# Enable nightly-only features
+nightly = [
+    "embedded-hal-1",
+    "embedded-hal-async",
+]
+
+# Implement embedded-hal 1.0 alpha traits.
+# Implement embedded-hal-async traits if `nightly` is set as well.
+unstable-traits = ["embedded-hal-1"]
+
 [dependencies]
 psoc4100s-hal = { version = "0.1.0", path = "../psoc4100s-hal", features = ["defmt", "unstable-traits", "nightly", "time-driver-wdc-ilo"] }
 
@@ -16,3 +35,7 @@ cortex-m-rt = "0.7.0"
 defmt = "0.3"
 defmt-rtt = "0.4"
 panic-probe = { version = "0.3", features = ["print-defmt"] }
+
+embedded-hal-02 = { package = "embedded-hal", version = "0.2.6", features = ["unproven"] }
+embedded-hal-1 = { package = "embedded-hal", version = "=1.0.0-rc.1", optional = true }
+embedded-hal-async = { version = "=1.0.0-rc.1", optional = true }

@@ -108,8 +108,8 @@ impl<'d, T: Instance + PeripheralClock> I2c<'d, T, Async> {
         i2c
     }
 
-    /// Calls `f` to check if we are ready or not.
-    /// If not, `g` is called once the waker is set (to eg enable the required interrupts).
+    /// Calls `f` to check if we are ready or not. If not, `g` is called once
+    /// the waker is set (to eg enable the required interrupts).
     async fn wait_on<F, U, G>(&mut self, mut f: F, mut g: G) -> U
     where
         F: FnMut(&mut Self) -> Poll<U>,
@@ -260,7 +260,7 @@ impl<'d, T: Instance + PeripheralClock> I2c<'d, T, Async> {
                     },
                     |_me| {
                         // Set tx "free" threshold a little high so that we get
-                        // woken before the fifo completely drains to minimize
+                        // woken before the FIFO completely drains to minimize
                         // transfer stalls.
                         p.tx_fifo_ctrl().write(|r| r.set_trigger_level(2));
                         critical_section::with(|_| {
@@ -339,11 +339,7 @@ impl<'d, T: Instance + PeripheralClock> I2c<'d, T, Async> {
         self.write_async_internal(write, true).await
     }
 
-    pub async fn read_async(
-        &mut self,
-        addr: u8,
-        read: &mut [u8],
-    ) -> Result<(), Error> {
+    pub async fn read_async(&mut self, addr: u8, read: &mut [u8]) -> Result<(), Error> {
         Self::start(addr, true)?;
         self.read_async_internal(read, true).await
     }
@@ -922,11 +918,21 @@ mod nightly {
             self.write_async(address, write.iter().copied()).await
         }
 
-        async fn write_read(&mut self, address: u8, write: &[u8], read: &mut [u8]) -> Result<(), Self::Error> {
-            self.write_read_async(address, write.iter().copied(), read).await
+        async fn write_read(
+            &mut self,
+            address: u8,
+            write: &[u8],
+            read: &mut [u8],
+        ) -> Result<(), Self::Error> {
+            self.write_read_async(address, write.iter().copied(), read)
+                .await
         }
 
-        async fn transaction(&mut self, address: u8, operations: &mut [Operation<'_>]) -> Result<(), Self::Error> {
+        async fn transaction(
+            &mut self,
+            address: u8,
+            operations: &mut [Operation<'_>],
+        ) -> Result<(), Self::Error> {
             if let Some(mut read) = operations.first().map(|o| matches!(o, Operation::Read(_))) {
                 Self::start(address, read)?;
                 for i in 0..operations.len() {

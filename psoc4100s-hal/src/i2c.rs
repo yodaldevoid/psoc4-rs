@@ -400,8 +400,6 @@ impl<'d, T: Instance + PeripheralClock + 'd, M: Mode> I2c<'d, T, M> {
         sda: PeripheralRef<'d, AnyPin>,
         config: Config,
     ) -> Self {
-        into_ref!(_peri);
-
         T::set_clock_divider(Some(&clock));
 
         assert!(config.frequency <= 1_000_000);

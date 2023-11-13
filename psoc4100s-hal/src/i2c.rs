@@ -64,7 +64,7 @@ impl Default for Config {
     }
 }
 
-pub const RX_FIFO_SIZE: u16 = 16;
+pub const RX_FIFO_SIZE: u16 = 8;
 pub const TX_FIFO_SIZE: u16 = 8;
 
 pub struct I2c<'d, T: Instance, M: Mode> {

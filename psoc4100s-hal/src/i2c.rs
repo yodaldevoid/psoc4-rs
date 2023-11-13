@@ -130,17 +130,16 @@ impl<'d, T: Instance + PeripheralClock> I2c<'d, T, Async> {
     // TODO: Move start/restart into method to reduce time between address and read.
     async fn read_async_internal(
         &mut self,
-        read: &mut [u8],
+        mut read: &mut [u8],
         send_stop: bool,
     ) -> Result<(), Error> {
         let p = T::regs();
 
-        let mut remaining = read.len();
-
         let mut abort_reason = Ok(());
 
-        while remaining > 0 {
-            let res = self.wait_on(
+        while read.len() > 0 {
+            let res = self
+                .wait_on(
                     |_me| {
                         let r = p.intr_m().read();
                         p.intr_m().write_value(r);
@@ -165,8 +164,10 @@ impl<'d, T: Instance + PeripheralClock> I2c<'d, T, Async> {
                     |_me| {
                         // Set our trigger level a little low so we can switch
                         // to manual ACKs for the last byte.
-                        let trigger_level = remaining.saturating_sub(2).min(RX_FIFO_SIZE as usize) as u8;
-                        p.rx_fifo_ctrl().write(|r| r.set_trigger_level(trigger_level));
+                        let trigger_level =
+                            read.len().saturating_sub(2).min(RX_FIFO_SIZE as usize) as u8;
+                        p.rx_fifo_ctrl()
+                            .write(|r| r.set_trigger_level(trigger_level));
                         p.intr_rx_mask().write(|r| r.set_trigger(true));
                         p.intr_m_mask().write(|r| {
                             r.set_i2c_bus_error(true);
@@ -175,7 +176,7 @@ impl<'d, T: Instance + PeripheralClock> I2c<'d, T, Async> {
                         });
                         if trigger_level != 0 {
                             p.i2c_ctrl().modify(|r| r.set_m_ready_data_ack(true));
-                        } else if remaining > 1 {
+                        } else if read.len() > 1 {
                             p.i2c_m_cmd().write(|r| r.set_m_ack(true));
                         }
                     },
@@ -187,15 +188,17 @@ impl<'d, T: Instance + PeripheralClock> I2c<'d, T, Async> {
                 break;
             }
 
-            let rx_bytes = (Self::rx_fifo_len() as usize).min(remaining);
-            let received = read.len() - remaining;
-            for b in &mut read[received..received + rx_bytes] {
+            let received = (Self::rx_fifo_len() as usize).min(read.len());
+            for b in &mut read[..received] {
                 *b = p.rx_fifo_rd().read().data() as u8;
             }
-            remaining -= rx_bytes;
+            read = &mut read[received..];
         }
 
-        let is_nack = matches!(abort_reason, Err(Error::Abort(AbortReason::NoAcknowledge(_))));
+        let is_nack = matches!(
+            abort_reason,
+            Err(Error::Abort(AbortReason::NoAcknowledge(_)))
+        );
         if (abort_reason.is_ok() && send_stop) || is_nack {
             let stop_res = Self::stop();
             abort_reason.and(stop_res)
